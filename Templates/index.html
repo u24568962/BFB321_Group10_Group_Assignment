@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}Canopy 1 - Truck Registration{% endblock %}
+
+{% block content %}
+
+<div>
+    <header class="page-heading">
+        <div class="eyebrow">Canopy 01 · Arrival registration</div>
+    <h2 class="mb-3">Canopy 1 - Truck Registration</h2>
+    <p class="text-muted">
+        Enter truck and driver information
+    </p>
+    </header>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form action="{{ url_for('confirm') }}" method="POST">
+                <section class="form-section">
+                    <h5 class="card-title mb-4">
+                        <span class="section-number">01</span>
+                        Driver information
+                    </h5>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="driver_name" class="form-label">Driver Name</label>
+                        <input type="text" id="driver_name" name="driver_name" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="passport_number" class="form-label">Passport Number</label>
+                        <input type="text" id="passport_number" name="passport_number" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nationality" class="form-label">Nationality</label>
+                        <input type="text" id="nationality" name="nationality" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="contact_number" class="form-label">Contact Number</label>
+                        <input type="tel" id="contact_number" name="contact_number" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="licence_number" class="form-label">Driver's Licence Number</label>
+                        <input type="text" id="licence_number" name="licence_number" class="form-control" required>
+                    </div>
+                </div>
+                </section>
+
+                <section class="form-section">
+                    <h5 class="mt-4 mb-3">
+                        <span class="section-number">02</span>
+                        Truck information
+                    </h5>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="truck_registration" class="form-label">Truck Registration Number</label>
+                        <input type="text" id="truck_registration" name="truck_registration" class="form-control" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="country_registration" class="form-label">Country of Registration</label>
+                        <input type="text" id="country_registration" name="country_registration" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="make_model" class="form-label">Make / Model</label>
+                        <input type="text" id="make_model" name="make_model" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="year" class="form-label">Year</label>
+                        <input type="number" id="year" name="year" class="form-control" min="1950" max="2027">
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="trailer_registration" class="form-label">Trailer Registration Number</label>
+                        <input type="text" id="trailer_registration" name="trailer_registration" class="form-control">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="manifest_reference" class="form-label">Manifest Reference Number</label>
+                        <input type="text" id="manifest_reference" name="manifest_reference" class="form-control" required>
+                    </div>
+                </div>
+                </section>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Save &amp; Continue
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}
