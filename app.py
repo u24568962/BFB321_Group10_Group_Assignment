@@ -22,5 +22,10 @@ def confirm_goods():
     goods = request.form.to_dict()
     return render_template("confirm_goods.html", goods=goods)
 
+@app.route("/lane_allocation")
+def lane_allocation():
+    lane = 3  # Example allocation for now
+    return render_template("lane_allocation.html", lane=lane)
+
 if __name__ == "__main__":
     app.run(debug=True)
