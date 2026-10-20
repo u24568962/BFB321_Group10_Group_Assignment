@@ -1,0 +1,68 @@
+
+{% extends "base.html" %}
+
+{% block title %}Truck Lane Allocation{% endblock %}
+
+{% block content %}
+
+<div>
+    <header class="page-heading">
+        <div class="eyebrow">Canopy 01 · Lane allocation</div>
+        <h2>Proceed to Truck Lane</h2>
+        <p>You have been allocated to the following truck lane.</p>
+    </header>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <section class="review-section text-center">
+
+                <h5 class="justify-content-center">
+                    TRUCK LANE
+                </h5>
+
+                <h1 class="display-1 fw-bold my-4"
+                    style="color: var(--forest);">
+                    {{ lane }}
+                </h1>
+
+                <div class="row g-2 my-4">
+                    {% for number in range(1, 6) %}
+                    <div class="col">
+                        <div class="p-3 rounded border text-center
+                            {% if number == lane %}
+                                text-white
+                            {% endif %}"
+                            {% if number == lane %}
+                            style="background-color: var(--forest);"
+                            {% endif %}>
+                            {{ number }}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+            </section>
+
+            <div class="alert alert-light border mt-4">
+                <strong>Instructions</strong>
+                <p class="mb-1">
+                    Follow the signs and lane markings.
+                </p>
+                <p class="mb-0">
+                    Display this screen at the lane for verification.
+                </p>
+            </div>
+
+            <div class="form-actions">
+                <a href="{{ url_for('admin_allocation') }}"
+                   class="btn btn-primary">
+                    Continue
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}
