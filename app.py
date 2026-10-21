@@ -27,5 +27,10 @@ def lane_allocation():
     lane = 3  # Example allocation for now
     return render_template("lane_allocation.html", lane=lane)
 
+@app.route("/admin_allocation")
+def admin_allocation():
+    window = 2  # Example allocation for now
+    return render_template("admin_allocation.html", window=window)
+
 if __name__ == "__main__":
     app.run(debug=True)

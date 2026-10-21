@@ -1,14 +1,19 @@
+<!-- use the layout from base.html (inheritence templates)-->
 {% extends "base.html" %}
-
+<!-- make the browser tab title Canopy 1 - Truck Registration -->
 {% block title %}Canopy 1 - Truck Registration{% endblock %}
 
+<!-- everything in here will be added into the corresponding block in base.html -->
 {% block content %}
 
-<div>
-    <header class="page-heading">
-        <div class="eyebrow">Canopy 01 · Arrival registration</div>
+<div> <!-- this groups all the page elements together-->
+    <header class="page-heading"> <!-- creates a heading section -->
+        <!-- class="eyebrow" is my custom CSS class defined in the style.css file for the small text above the heading-->
+        <div class="eyebrow">Canopy 01 · Arrival registration</div> 
+    <!-- class="mb-3" is a Bootstrap class that adds space below the heading-->
     <h2 class="mb-3">Canopy 1 - Truck Registration</h2>
-    <p class="text-muted">
+
+    <p class="text-muted"> <!-- add a paragraph with less itense text-->
         Enter truck and driver information
     </p>
     </header>
