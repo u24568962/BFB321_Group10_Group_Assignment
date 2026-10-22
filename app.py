@@ -12,10 +12,9 @@ def confirm():
     details = request.form.to_dict()
     return render_template("confirm_details.html", details=details)
 
-@app.route("/goods", methods=["GET", "POST"])
+@app.route("/goods")
 def goods():
-    goods = request.form.to_dict()
-    return render_template("goods.html", goods=goods)
+    return render_template("goods.html")
 
 @app.route("/confirm_goods", methods=["POST"])
 def confirm_goods():
