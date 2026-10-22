@@ -20,7 +20,7 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form action="{{ url_for('confirm') }}" method="POST">
+            <form action="{{ url_for('goods') }}" method="POST">
                 <section class="form-section">
                     <h5 class="card-title mb-4">
                         <span class="section-number">01</span>
@@ -29,32 +29,61 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="driver_name" class="form-label">Driver Name</label>
-                        <input type="text" id="driver_name" name="driver_name" class="form-control" required>
+                        <input type="checkbox" id="electronics" name="electronics" class="form-check-input">
+                        <label for="electronics" class="form-check-label">Electronics</label>
                     </div>
 
                     <div class="col-md-6">
-                        <label for="passport_number" class="form-label">Passport Number</label>
-                        <input type="text" id="passport_number" name="passport_number" class="form-control" required>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="nationality" class="form-label">Nationality</label>
-                        <input type="text" id="nationality" name="nationality" class="form-control" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="contact_number" class="form-label">Contact Number</label>
-                        <input type="tel" id="contact_number" name="contact_number" class="form-control" required>
+                        <input type="checkbox" id="furniture" name="furniture" class="form-check-input">
+                        <label for="furniture" class="form-check-label">Furniture</label>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label for="licence_number" class="form-label">Driver's Licence Number</label>
-                        <input type="text" id="licence_number" name="licence_number" class="form-control" required>
+                        <input type="checkbox" id="clothing_textiles" name="clothing_textiles" class="form-check-input">
+                        <label for="clothing_textiles" class="form-check-label">Clothing & Textiles</label>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="checkbox" id="chemicals" name="chemicals" class="form-check-input" >
+                        <label for="chemicals" class="form-check-label">Chemicals</label>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <input type="checkbox" id="food_beverages" name="food_beverages" class="form-check-input">
+                        <label for="food_beverages" class="form-check-label">Food & Beverages</label>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="checkbox" id="automotive_parts" name="automotive_parts" class="form-check-input">
+                        <label for="automotive_parts" class="form-check-label">Automotive Parts</label>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <input type="checkbox" id="machinery_parts" name="machinery_parts" class="form-check-input">
+                        <label for="machinery_parts" class="form-check-label">Machinery & Parts</label>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="checkbox" id="plastics" name="plastics" class="form-check-input">
+                        <label for="plastics" class="form-check-label">Plastics</label>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <input type="checkbox" id="building_materials" name="building_materials" class="form-check-input">
+                        <label for="building_materials" class="form-check-label">Building Materials</label>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="checkbox" id="paper_products" name="paper_products" class="form-check-input">
+                        <label for="paper_products" class="form-check-label">Paper Products</label>
                     </div>
                 </div>
                 </section>
@@ -62,44 +91,14 @@
                 <section class="form-section">
                     <h5 class="mt-4 mb-3">
                         <span class="section-number">02</span>
-                        Truck information
+                        Other (please specify)
                     </h5>
 
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="truck_registration" class="form-label">Truck Registration Number</label>
-                        <input type="text" id="truck_registration" name="truck_registration" class="form-control" required>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="country_registration" class="form-label">Country of Registration</label>
-                        <input type="text" id="country_registration" name="country_registration" class="form-control" required>
-                    </div>
+                    <label for="other_goods" class="form-label">Other Goods</label>
+                    <input type="text" id="other_goods" name="other_goods" class="form-control">
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="make_model" class="form-label">Make / Model</label>
-                        <input type="text" id="make_model" name="make_model" class="form-control">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="year" class="form-label">Year</label>
-                        <input type="number" id="year" name="year" class="form-control" min="1950" max="2027">
-                    </div>
-                </div>
-
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label for="trailer_registration" class="form-label">Trailer Registration Number</label>
-                        <input type="text" id="trailer_registration" name="trailer_registration" class="form-control">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="manifest_reference" class="form-label">Manifest Reference Number</label>
-                        <input type="text" id="manifest_reference" name="manifest_reference" class="form-control" required>
-                    </div>
-                </div>
                 </section>
 
                 <div class="form-actions">
