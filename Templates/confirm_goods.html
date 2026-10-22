@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Confirm Goods Information{% endblock %}
+
+{% block content %}
+
+<div>
+    <header class="page-heading">
+        <div class="eyebrow">Canopy 01 · Review details</div>
+        <h2>Confirm Goods Information</h2>
+        <p>Please review the information captured at Canopy 1.</p>
+    </header>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+
+            <section class="review-section">
+                <h5><span class="section-number">01</span>Common Goods</h5>
+                <div class="table-responsive">
+            <table class="table table-bordered">
+                <tbody>
+                    {% for item in selected%}
+                    <tr>
+                        <th>Item {{ loop.index }}</th>
+                        <td>{{ item }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <th>Selected Goods</th>
+                        <td>No goods selected</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                </div>
+            </section>
+
+            <section class="review-section">
+                <h5><span class="section-number">02</span>Other Goods</h5>
+                <div class="table-responsive">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Other (specified)</th>
+                        <td>{{ other_goods or "None" }}</td>
+                    </tr>
+                </tbody>
+            </table>
+                </div>
+            </section>
+
+            <div class="review-actions d-flex justify-content-between">
+
+                <button type="button" id="editBtn"
+                class="btn btn-secondary"
+                onclick="toggleEdit()">
+                Edit Information
+                </button>
+
+                <a href="{{ url_for('lane_allocation') }}" class="btn btn-primary">
+                Confirm & Continue
+                </a>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+function toggleEdit() {
+    const button = document.getElementById("editBtn");
+    const cells = document.querySelectorAll("td");
+
+    if (button.textContent.trim() === "Edit Information") {
+
+        cells.forEach(cell => {
+            cell.contentEditable = "true";
+            cell.classList.add("table-warning");
+        });
+
+        button.textContent = "Save Changes";
+
+    } else {
+
+        cells.forEach(cell => {
+            cell.contentEditable = "false";
+            cell.classList.remove("table-warning");
+        });
+
+        button.textContent = "Edit Information";
+    }
+}
+</script>
+
+
+{% endblock %}
