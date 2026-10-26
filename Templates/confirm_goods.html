@@ -82,28 +82,37 @@
 
 </div>
 
-
-<script>
+<!-- got assistance from  W3Schools to write the JavaScript function as this was not fully covered 
+ in the semester scope-->
+<script>// this shows that the JAvascript code follows
 function toggleEdit() {
-    const button = document.getElementById("editBtn");
-    const cells = document.querySelectorAll("td");
+    const button = document.getElementById("editBtn");// finds the Edit Information button on the page (the document part) and stores a reference to it in a variable called button
+    const cells = document.querySelectorAll("td");// this finds all the table data cells and stores them in a variable called cells so they can be edited
 
+// now we made an if statement to check if the condition is true: Check if the button currently says "Edit Information"
     if (button.textContent.trim() === "Edit Information") {
 
+        // go through each table cell
         cells.forEach(cell => {
+            // Allow the user to edit the text inside the cell
             cell.contentEditable = "true";
+            // Add a Bootstrap yellow warning background to show which cells can be edited - so not the table headings etc.
             cell.classList.add("table-warning");
         });
-
+        // Change the button text to "Save Changes"
         button.textContent = "Save Changes";
 
     } else {
+        // If the button does not say "Edit Information" (so the condition is false in the previous if statement)
+        // go through each table cell again
 
         cells.forEach(cell => {
+            // Stop the user from editing the cells
             cell.contentEditable = "false";
+            // and remove the yellow background from the cells because they are no longer "editable"
             cell.classList.remove("table-warning");
         });
-
+        // Change the button text back to "Edit Information"
         button.textContent = "Edit Information";
     }
 }
