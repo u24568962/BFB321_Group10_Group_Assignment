@@ -1,15 +1,40 @@
-# Supply chain model: queueing theory (M/M/1 and M/M/c) for predicted waiting times
-# M/M/1: Single server queueing model
-# M/M/c: Multi-server queueing model with c servers working in parallel
 
 # the arrival rates and and service rate should be non-negative and the number of servers should be a positive integer. 
 # The utilisation is calculated as rho = arrival_rate / (servers * service_rate).
 # Arrival and service rates must use the same time unit, so W and Wq are returned in that unit.
 # If the utilisation is greater than or equal to 1, it indicates that the system is overloaded and cannot handle the incoming traffic efficiently.
+
+"""Supply chain model: queueing theory (M/M/1 and M/M/c) for predicted waiting times.
+
+Queuing theory is used to predict waiting times. Two formulas are used: M/M/1 (single server queueing) abd M/M/c (multi-server queueing).
+The formulas are given in the functions below.
+
+Assumptions for both models:
+    - The trucks that arrive form a poisson distribution.
+    - Service times are exponentially distributed.
+    - The queue has unlimited capacity and trucks are served on a first come first serve basis.
+    - Utilisation is <1 as system is in a steady-state
+"""
 import math
 
 
 def utilisation(arrival_rate, service_rate, servers=1):
+    """Calculate the utilisation (rho) of the servers.
+
+    Formula used in utilisation :
+        rho = arrival_rate / (servers * service_rate)
+
+    Inputs that the function takes :
+
+        arrival_rate: average number of trucks arriving per time unit, should be more than 0 .
+
+        service_rate: average number of trucks one server can process per time, should be a positive number 
+        servers: number of servers working in parallel , atleast 1.
+
+    Stuff that the function returns :
+        The utilisation as a fraction 
+
+    """
     if arrival_rate < 0 or service_rate <= 0 or servers < 1:
         raise ValueError("Arrival rate must be >= 0, service rate > 0 and servers >= 1")
     utilisation = arrival_rate / (servers * service_rate)
@@ -17,6 +42,30 @@ def utilisation(arrival_rate, service_rate, servers=1):
 
 #Define steady state mm1 metrics for a single lane 
 def mm1_metrics(arrival_rate, service_rate):   
+    """This function calculates the  steady state M/M/1 metrics for a single lane of traffic at the border bost. (May later implement a helper)
+
+    variables used by this function 
+       lambda = arrival_rate
+       mu = service_rate
+
+
+    Formulas that this function uses:
+    
+       
+        rho = lambda / mu
+        L   = lambda / (mu - lambda)
+        Lq  = lambda**2 / (mu * (mu - lambda))
+        W   = 1 / (mu - lambda)
+        Wq  = lambda / (mu * (mu - lambda))
+
+    Inputs:
+        arrival_rate: average number of trucks arriving per time, should be larger than or equal to 0
+        service_rate: average number of trucks the lane can process per time unit, should also be larger than or equal to 0(need to come back and check this)
+
+
+
+
+    """
     rho = utilisation(arrival_rate, service_rate)
     if rho >= 1:
         raise ValueError("System is unstable (utilisation >= 1)")
@@ -31,6 +80,25 @@ def mm1_metrics(arrival_rate, service_rate):
 
 #Define steady state mmc metrics for multiple admin windows sharing a queue
 def mmc_metrics(arrival_rate, service_rate, servers):
+    """Calculate the steady state mmc metrics for multiple admin windows sharing a single queue.
+
+    Formulas (lambda = arrival_rate, mu = service_rate, c = servers):
+        a = lambda / mu               
+        P0 = 1 /( sum(a**n / n! for n = 0 to c-1) + a^c/ (c!*(1 - rho)))
+        P_wait = a^c / (c! * (1 - rho)) * P0 
+        Wq  = P_wait / (c * mu - lambda)
+        W  = Wq + 1 / mu
+        Lq = lambda * Wq              
+        L = lambda * W                 
+
+    inputs:
+        arrival_rate: average number of trucks arriving pe minute and needs to be greater or equal to zero.
+        service_rate: average number of trucks processed per window per minute (also greater than zero)
+        servers: number of avaiable admin windows (greater or equal to 1)
+
+
+
+    """
     rho = utilisation(arrival_rate, service_rate, servers)
     if rho >= 1:
         raise ValueError("System is unstable (utilisation >= 1)")
