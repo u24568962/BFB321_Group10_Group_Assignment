@@ -42,7 +42,7 @@ def utilisation(arrival_rate, service_rate, servers=1):
 
 #Define steady state mm1 metrics for a single lane 
 def mm1_metrics(arrival_rate, service_rate):   
-    """This function calculates the  steady state M/M/1 metrics for a single lane of traffic at the border bost. (May later implement a helper)
+    """Function: steady state M/M/1 metrics for a single lane of traffic at the border bost.
 
     variables used by this function 
        lambda = arrival_rate
@@ -80,7 +80,7 @@ def mm1_metrics(arrival_rate, service_rate):
 
 #Define steady state mmc metrics for multiple admin windows sharing a queue
 def mmc_metrics(arrival_rate, service_rate, servers):
-    """Calculate the steady state mmc metrics for multiple admin windows sharing a single queue.
+    """Function: steady state mmc metrics for multiple admin windows sharing a single queue.
 
     Formulas (lambda = arrival_rate, mu = service_rate, c = servers):
         a = lambda / mu               
