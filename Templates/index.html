@@ -18,22 +18,26 @@
     </p>
     </header>
 
+    <!-- this creates a white card that contains the registration form card and shadow-sm are bootstrap classes-->
     <div class="card shadow-sm">
-        <div class="card-body">
-            <form action="{{ url_for('confirm') }}" method="POST">
-                <section class="form-section">
-                    <h5 class="card-title mb-4">
-                        <span class="section-number">01</span>
+        <div class="card-body"> <!-- area inside the card where the elements go -->
+            <!-- action shows where form information must be sent-->
+             <!-- create a form that sends the input information to the confirm 
+              function in Flask using  POST method -->
+            <form action="{{ url_for('confirm') }}" method="POST"> 
+                <section class="form-section"> <!-- group form fields together and apply styling from style.css-->
+                    <h5 class="card-title mb-4"> <!-- heading of form (mb-4 is bootstrap)-->
+                        <span class="section-number">01</span> <!-- styles=d with custom css class-->
                         Driver information
                     </h5>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                <div class="row mb-3"> <!-- new Bootstrap row -->
+                    <div class="col-md-6"> <!-- bootstrap column (grid system)-->
                         <label for="driver_name" class="form-label">Driver Name</label>
                         <input type="text" id="driver_name" name="driver_name" class="form-control" required>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6"> <!-- this is now the column on the rhs-->
                         <label for="passport_number" class="form-label">Passport Number</label>
                         <input type="text" id="passport_number" name="passport_number" class="form-control" required>
                     </div>
