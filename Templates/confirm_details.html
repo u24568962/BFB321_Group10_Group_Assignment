@@ -1,27 +1,27 @@
 {% extends "base.html" %}
-
 {% block title %}Confirm Truck & Driver Information{% endblock %}
-
 {% block content %}
 
+ <!-- similar structure to index.html-->
+<!-- this page is just for checking what was entered into the previous forms and edit if there were any errors -->
 <div>
-    <header class="page-heading">
-        <div class="eyebrow">Canopy 01 · Review details</div>
+    <header class="page-heading"> <!-- this just uses the custom css styling to create a heading section -->
+        <div class="eyebrow">Canopy 01 · Review details</div> <!-- small text above heading - also explained in index-->
         <h2>Confirm Truck & Driver Information</h2>
         <p>Please review the information captured at Canopy 1.</p>
     </header>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm">     <!-- this creates a white card that contains the form card and shadow-sm are bootstrap classes-->
         <div class="card-body">
 
-            <section class="review-section">
+            <section class="review-section">  <!-- custom css that styles this section from my style.css folder-->
                 <h5><span class="section-number">01</span>Driver information</h5>
-                <div class="table-responsive">
-            <table class="table table-bordered">
-                <tbody>
+                <div class="table-responsive"> <!-- this i had to google to indlude but it allows a user to scroll left and right on a smaller screen like a phone incase the table content is too much for the screen -->
+            <table class="table table-bordered"> <!-- bootstrap table for styling with borders around the cells -->
+                <tbody> <!-- contains table data -->
                     <tr>
                         <th>Driver Name</th>
-                        <td>{{ details.driver_name }}</td>
+                        <td>{{ details.driver_name }}</td> <!-- this is jija that retrieves the driver name entered on the index.html form from Flask -->
                     </tr>
                     <tr>
                         <th>Passport Number</th>
@@ -44,6 +44,7 @@
                 </div>
             </section>
 
+            <!-- essentially the same thing just for truck information now-->
             <section class="review-section">
                 <h5><span class="section-number">02</span>Truck information</h5>
                 <div class="table-responsive">
@@ -78,14 +79,25 @@
                 </div>
             </section>
 
+            <!-- now this part creates the buttons-->
+            <!-- div = button container with custom css styling and the d-flex uses 
+             Bootstrap flexbox to move the buttons to be equally spaced horizontally 
+             and justify-content-between moves buttons to opposite sides-->
             <div class="review-actions d-flex justify-content-between">
 
+                <!-- this is the edit information button with bootstrap styling -->
                 <button type="button" id="editBtn"
                 class="btn btn-secondary"
-                onclick="toggleEdit()">
+                onclick="toggleEdit()"> 
                 Edit Information
                 </button>
+                <!-- toggleEdit() is a custom JavaScript function that allows users
+                to edit their information when the button is clicked.
+                W3Schools explains how to create JavaScript functions.
+                The function is defined at the bottom of this HTML file. -->
 
+                <!-- the a is achor that creates a clickable link that takes the user to the Goods page-->
+                <!--Jinja uses Flask to find the URL for the goods function in our app.py python file-->
                 <a href="{{ url_for('goods') }}" class="btn btn-primary">
                 Confirm & Continue
                 </a>
@@ -97,28 +109,40 @@
 
 </div>
 
-
-<script>
+<!-- got assistance from  W3Schools to write the JavaScript function as this was not fully covered 
+ in the semester scope-->
+<script> // this shows that the JAvascript code follows
 function toggleEdit() {
-    const button = document.getElementById("editBtn");
-    const cells = document.querySelectorAll("td");
+    const button = document.getElementById("editBtn"); // finds the Edit Information button on the page (the document part) and stores a reference to it in a variable called button
+    const cells = document.querySelectorAll("td"); // this finds all the table data cells and stores them in a variable called cells so they can be edited
 
-    if (button.textContent.trim() === "Edit Information") {
+    // now we made an if statement to check if the condition is true: Check if the button currently says "Edit Information"
+    if (button.textContent.trim() === "Edit Information") { 
 
+        // go through each table cell
         cells.forEach(cell => {
+            // Allow the user to edit the text inside the cell
             cell.contentEditable = "true";
+
+            // Add a Bootstrap yellow warning background to show which cells can be edited - so not the table headings etc.
             cell.classList.add("table-warning");
         });
 
+        // Change the button text to "Save Changes"
         button.textContent = "Save Changes";
 
     } else {
 
+        // If the button does not say "Edit Information" (so the condition is false in the previous if statement)
+        // go through each table cell again
         cells.forEach(cell => {
+            // Stop the user from editing the cells
             cell.contentEditable = "false";
+            // and remove the yellow background from the cells because they are no longer "editable"
             cell.classList.remove("table-warning");
         });
-
+        
+        // Change the button text back to "Edit Information"
         button.textContent = "Edit Information";
     }
 }
