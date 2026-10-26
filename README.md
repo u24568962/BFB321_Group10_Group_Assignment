@@ -28,3 +28,5 @@ Chardi Snyman - u24595986
    ```
 6. Open the following address in your browser: (this will also be an output in the terminal after running python)
    http://127.0.0.1:5000/
+
+7. The stand alone supply chain model is in the models folder under queueing_theory.py. This file includes the necessary tests when it is run.
