@@ -18,17 +18,20 @@
     </p>
     </header>
 
+<!-- this creates a white card that contains the registration form card and shadow-sm are bootstrap classes-->
     <div class="card shadow-sm">
         <div class="card-body">
+            <!-- create a form that sends the input information to the confirm 
+              function in Flask using  POST method -->
             <form action="{{ url_for('confirm_goods') }}" method="POST">
-                <section class="form-section">
-                    <h5 class="card-title mb-4">
-                        <span class="section-number">01</span>
+                <section class="form-section"><!-- group form fields together and apply styling from style.css-->
+                    <h5 class="card-title mb-4"><!-- heading of form (mb-4 is bootstrap)-->
+                        <span class="section-number">01</span> <!-- styled with custom css class-->
                         Common Goods
                     </h5>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                <div class="row mb-3"><!-- new Bootstrap row -->
+                    <div class="col-md-6"><!-- bootstrap column (grid system) takes up 6/12 width -->
                         <input type="checkbox" id="electronics" name="electronics" class="form-check-input">
                         <label for="electronics" class="form-check-label">Electronics</label>
                     </div>
@@ -39,7 +42,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
+                <div class="row mb-3"><!-- the next row of input columns -->
                     <div class="col-md-6">
                         <input type="checkbox" id="clothing_textiles" name="clothing_textiles" class="form-check-input">
                         <label for="clothing_textiles" class="form-check-label">Clothing & Textiles</label>
@@ -100,9 +103,9 @@
                 </div>
 
                 </section>
-
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
+<!-- this part submits the entered information to Flask when clicked.-->
+                <div class="form-actions"><!-- this creates a custom styled button from the style.css file-->
+                    <button type="submit" class="btn btn-primary"><!-- class is bootstrapped -->
                         Save &amp; Continue
                     </button>
                 </div>
