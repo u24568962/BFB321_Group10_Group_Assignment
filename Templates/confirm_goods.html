@@ -4,17 +4,20 @@
 
 {% block content %}
 
+ <!-- similar structure to goods.html-->
+<!-- this page is just for checking what was entered into the previous forms and edit if there were any errors -->
+
 <div>
-    <header class="page-heading">
-        <div class="eyebrow">Canopy 01 · Review details</div>
+    <header class="page-heading"><!-- this just uses the custom css styling to create a heading section -->
+        <div class="eyebrow">Canopy 01 · Review details</div><!-- small text above heading - also explained in index-->
         <h2>Confirm Goods Information</h2>
         <p>Please review the information captured at Canopy 1.</p>
     </header>
 
-    <div class="card shadow-sm">
+    <div class="card shadow-sm"><!-- this creates a white card that contains the form card and shadow-sm are bootstrap classes-->
         <div class="card-body">
 
-            <section class="review-section">
+            <section class="review-section"><!-- custom css that styles this section from my style.css folder-->
                 <h5><span class="section-number">01</span>Common Goods</h5>
                 <div class="table-responsive">
             <table class="table table-bordered">
@@ -49,6 +52,10 @@
                 </div>
             </section>
 
+ <!-- now this part creates the buttons-->
+            <!-- div = button container with custom css styling and the d-flex uses 
+             Bootstrap flexbox to move the buttons to be equally spaced horizontally 
+             and justify-content-between moves buttons to opposite sides-->
             <div class="review-actions d-flex justify-content-between">
 
                 <button type="button" id="editBtn"
@@ -57,6 +64,13 @@
                 Edit Information
                 </button>
 
+                  <!-- toggleEdit() is a custom JavaScript function that allows users
+                to edit their information when the button is clicked.
+                W3Schools explains how to create JavaScript functions.
+                The function is defined at the bottom of this HTML file. -->
+
+                <!-- the a is an anchor that creates a clickable link that takes the user to the lane allocation page-->
+                <!--Jinja uses Flask to find the URL for the lane_allocation function in our app.py python file-->
                 <a href="{{ url_for('lane_allocation') }}" class="btn btn-primary">
                 Confirm & Continue
                 </a>
