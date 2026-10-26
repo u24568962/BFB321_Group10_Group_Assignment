@@ -27,13 +27,13 @@
             <form action="{{ url_for('confirm') }}" method="POST"> 
                 <section class="form-section"> <!-- group form fields together and apply styling from style.css-->
                     <h5 class="card-title mb-4"> <!-- heading of form (mb-4 is bootstrap)-->
-                        <span class="section-number">01</span> <!-- styles=d with custom css class-->
+                        <span class="section-number">01</span> <!-- styled with custom css class-->
                         Driver information
                     </h5>
 
                 <div class="row mb-3"> <!-- new Bootstrap row -->
-                    <div class="col-md-6"> <!-- bootstrap column (grid system)-->
-                        <label for="driver_name" class="form-label">Driver Name</label>
+                    <div class="col-md-6"> <!-- bootstrap column (grid system) takes up 6/12 width -->
+                        <label for="driver_name" class="form-label">Driver Name</label> 
                         <input type="text" id="driver_name" name="driver_name" class="form-control" required>
                     </div>
 
@@ -43,7 +43,7 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
+                <div class="row mb-3"> <!-- the next row of input columns -->
                     <div class="col-md-6">
                         <label for="nationality" class="form-label">Nationality</label>
                         <input type="text" id="nationality" name="nationality" class="form-control" required>
@@ -55,21 +55,22 @@
                     </div>
                 </div>
 
-                <div class="row mb-3">
-                    <div class="col-md-6">
+                <div class="row mb-3"> <!-- the last row only contains a sigle input-->
+                    <div class="col-md-6"> <!-- i still want this to only use 6/12 "slots" because i want it lined up -->
                         <label for="licence_number" class="form-label">Driver's Licence Number</label>
                         <input type="text" id="licence_number" name="licence_number" class="form-control" required>
                     </div>
                 </div>
                 </section>
 
-                <section class="form-section">
-                    <h5 class="mt-4 mb-3">
-                        <span class="section-number">02</span>
+                <section class="form-section"> <!-- this groups my truck information together -->
+                    <h5 class="mt-4 mb-3"> <!-- this is just bootstrapping adding spacing above and below my heading -->
+                        <span class="section-number">02</span> <!-- styled with custom css class-->
                         Truck information
                     </h5>
 
-                <div class="row mb-3">
+<!-- this is basically the same structure as the Driver Information inputs - except that the bottom row has 2 column entries -->
+                <div class="row mb-3"> 
                     <div class="col-md-6">
                         <label for="truck_registration" class="form-label">Truck Registration Number</label>
                         <input type="text" id="truck_registration" name="truck_registration" class="form-control" required>
@@ -89,7 +90,8 @@
 
                     <div class="col-md-6">
                         <label for="year" class="form-label">Year</label>
-                        <input type="number" id="year" name="year" class="form-control" min="1950" max="2027">
+                        <!-- in the input i added a min max limits so that i could prevent people from entering invalid or unrealistic years and so help with data accuracy -->
+                        <input type="number" id="year" name="year" class="form-control" min="1950" max="2027"> 
                     </div>
                 </div>
 
@@ -106,10 +108,11 @@
                 </div>
                 </section>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        Save &amp; Continue
-                    </button>
+ <!-- this part submits the entered information to Flask when clicked.-->
+                <div class="form-actions"> <!-- this creates a custom styled button from the style.css file-->
+                    <button type="submit" class="btn btn-primary"> <!-- class is bootstrapped -->
+                        Save &amp; Continue 
+                    </button> <!-- &amp just shows & in html -->
                 </div>
 
             </form>
