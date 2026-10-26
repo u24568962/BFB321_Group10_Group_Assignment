@@ -15,7 +15,7 @@ Chardi Snyman - u24595986
 1. Download or clone the GitHub repository.
 2. Open the project folder in your VS Code.
 3. Make sure that Python is installed.
-4. Open the terminal and install Flask: (it was used to temporarily store data)
+4. Open the terminal and install Flask.
    How to do it: 
 
    ```bash
