@@ -1,35 +1,38 @@
-<!----> Use the base template -->
+<!-- use the base template -->
 {% extends "base.html" %}
-<!-- Set the browsertitle for the lane allocation of thepage -->
+<!-- set the browsertitle for the lane allocation of thepage -->
 {% block title %}Truck Lane Allocation{% endblock %}
 
 {% block content %}
-<!-- Group all the page elements together -->
-<div>
-    <!-- Create the heading section for the page -->
-    <header class="page-heading">
+
+<div><!-- this groups all the page elements together-->
+    
+    <header class="page-heading"><!-- creates a heading section -->
+        <!-- class="eyebrow" is my custom CSS class defined in the style.css file for the small text above the heading-->
         <div class="eyebrow">Canopy 01 · Lane allocation</div>
-        <h2>Proceed to Truck Lane</h2>
-        <p>You have been allocated to the following truck lane.</p>
+        <h2>Proceed to Truck Lane</h2><!-- this displays the main heading -->
+        <p>You have been allocated to the following truck lane.</p><!-- a lane has been allocated to the driver -->
     </header>
 
-    <div class="card shadow-sm">
-        <div class="card-body">
+    <div class="card shadow-sm"><!-- create a card with a small shadow around the lane allocation information -->
+        <div class="card-body"><!-- adds structure inside the card -->
 
-            <section class="review-section text-center">
+            <section class="review-section text-center"><!-- create a section to display the allocated lane in the centre of the card -->
 
-                <h5 class="justify-content-center">
+                <h5 class="justify-content-center"> <!-- display the label for the truck lane that is allocated-->
                     TRUCK LANE
                 </h5>
 
+<!-- display the lane number passed from the Python Flask in backend -->
                 <h1 class="display-1 fw-bold my-4"
                     style="color: var(--forest);">
                     {{ lane }}
                 </h1>
 
-                <div class="row g-2 my-4">
-                    {% for number in range(1, 6) %}
-                    <div class="col">
+                <div class="row g-2 my-4"> <!-- create a row to display all five of the truck lanes -->
+                    {% for number in range(1, 6) %}<!-- create a loop through lane numbers from 1 to 5 -->
+                    <div class="col"><!-- give each lane an own column -->
+                         <!-- display the lane number inside a box -->
                         <div class="p-3 rounded border text-center
                             {% if number == lane %}
                                 text-white
@@ -37,27 +40,29 @@
                             {% if number == lane %}
                             style="background-color: var(--forest);"
                             {% endif %}>
-                            {{ number }}
-                        </div>
+                            {{ number }}<!-- display the current lane number -->
+                        </div><!-- in first if statement if this lane is allocated, change the text colour to white --> <!-- highlight the allocated lane with the forest colour in second if statement-->
                     </div>
-                    {% endfor %}
+                    {% endfor %} <!-- end the loop through the five lanes -->
                 </div>
 
             </section>
 
-            <div class="alert alert-light border mt-4">
-                <strong>Instructions</strong>
-                <p class="mb-1">
+            <div class="alert alert-light border mt-4"><!-- display instructions to help the driver proceed to the correct lane -->
+            
+
+                <strong>Instructions</strong><!-- display the instructions heading -->
+                <p class="mb-1"><!-- tells the driver to follow the signs and lane markings -->
                     Follow the signs and lane markings.
                 </p>
-                <p class="mb-0">
+                <p class="mb-0"><!-- tells the driver to show the screen for verification -->
                     Display this screen at the lane for verification.
                 </p>
             </div>
 
-            <div class="form-actions">
+            <div class="form-actions"><!-- create the section for the Continue button -->
                 <a href="{{ url_for('admin_allocation') }}"
-                   class="btn btn-primary">
+                   class="btn btn-primary"><!-- link to the admin allocation page using the Flask route name -->
                     Continue
                 </a>
             </div>
@@ -66,4 +71,4 @@
     </div>
 </div>
 
-{% endblock %}
+{% endblock %}<!-- end the content block defined in base.html -->
