@@ -10,9 +10,10 @@ import math
 
 
 def utilisation(arrival_rate, service_rate, servers=1):
-    if arrival_rate < 0 or service_rate <= 0 or not isinstance(servers, int) or servers < 1:
-        raise ValueError("Arrival rate must be >= 0, service rate > 0 and servers a whole number >= 1")
-    return arrival_rate / (servers * service_rate)
+    if arrival_rate < 0 or service_rate <= 0 or servers < 1:
+        raise ValueError("Arrival rate must be >= 0, service rate > 0 and servers >= 1")
+    utilisation = arrival_rate / (servers * service_rate)
+    return utilisation
 
 #Define steady state mm1 metrics for a single lane 
 def mm1_metrics(arrival_rate, service_rate):   
@@ -48,3 +49,45 @@ def mmc_metrics(arrival_rate, service_rate, servers):
         "W": w,  # Average time a truck spends in the system
         "L": arrival_rate * w,  # Average number of trucks in the system
     }
+
+#Test the models
+if __name__ == "__main__":
+
+# Test 1: mm1
+# Hand calculation: arrival rate = 2, service rate = 3
+# rho = 2 / 3           = 0.667
+# L   = 2 / (3 - 2)     = 2
+# Lq  = 2^2 / (3 * 1)   = 1.333
+# W   = 1 / (3 - 2)     = 1
+# Wq  = 2 / (3 * 1)     = 0.667
+    result = mm1_metrics(2, 3)
+
+    if abs(result["L"] - 2) < 0.001 and abs(result["Lq"] - 1.333) < 0.001 \
+            and abs(result["W"] - 1) < 0.001 and abs(result["Wq"] - 0.667) < 0.001:
+        print("Test 1 (M/M/1) passed")
+    else:
+        print("Test 1 (M/M/1) FAILED:", result)
+
+# Test 2: mmc
+# Hand calculation: arrival rate = 10, service rate = 4, servers = 3
+# a      = 10 / 4                            = 2.5
+# rho    = 10 / (3 * 4)                      = 0.833
+# P0     = 1 / (1 + 2.5 + 3.125 + 15.625)    = 0.0449
+# P_wait = 15.625 * 0.0449                   = 0.702
+# Wq     = 0.702 / (12 - 10)                 = 0.351
+# Lq     = 10 * 0.351                        = 3.511
+    result = mmc_metrics(10, 4, 3)
+
+    if abs(result["P_wait"] - 0.702) < 0.001 and abs(result["Wq"] - 0.351) < 0.001 \
+            and abs(result["Lq"] - 3.511) < 0.001:
+        print("Test 2 (M/M/c) passed")
+    else:
+        print("Test 2 (M/M/c) FAILED:", result)
+
+# Test 3: unstable system ----------
+# Hand calculation: rho = 3 / 3 = 1, so the model should raise an error
+    try:
+        mm1_metrics(3, 3)
+        print("Test 3 (unstable) FAILED: no error raised")
+    except ValueError:
+        print("Test 3 (unstable) passed")

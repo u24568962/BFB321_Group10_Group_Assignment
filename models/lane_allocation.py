@@ -1,11 +1,19 @@
 # We need to allocate the truck to parking bays with the least number of workload minutes. Each bay can also only hold 5 trucks.
 
+
+# Model logic 
 # Make a single parking bay record to start the process
 def make_lane(number, capacity=5, queue=None):
-    return {"number": number,
-            "capacity": capacity,
-            "queue": list(queue) if queue else []
-            }
+    if queue:
+        queues = list(queue)
+    else:
+        queues = []
+
+    single_lane = {"number": number,
+                   "capacity": capacity,
+                   "queue": queues
+                   }
+    return single_lane
 
 # Five parking lanes
 def default_lanes():
@@ -34,12 +42,19 @@ goods_time = {
 other_goods_time = 2.0 # in minutes
 
 # define a function to calculate the total processing time for a truck based on its cargo types
-def calculate_processing_time(goods_keys, other_goods="", base_time=base_time, goods_time=goods_time, other_goods_time=other_goods_time):
+def calculate_processing_time(goods_names, other_goods="", base_time=base_time, goods_time=goods_time, other_goods_time=other_goods_time):
+    # Single cargo is string and not list 
+    if isinstance(goods_names, str):
+        goods_names = [goods_names]
     total_time = base_time
-    # Normalise keys  and count each cargo type only once
-    for key in set(k.strip().lower() for k in goods_keys):
-        if key in goods_time:
-            total_time += goods_time[key]
+    # count each cargo type only once
+    unique_goods = set()
+    for k in goods_names:
+        unique_goods.add(k)
+
+    for goods in unique_goods:
+        if goods in goods_time:
+            total_time += goods_time[goods]
     if other_goods and other_goods.strip():
         total_time += other_goods_time
     return total_time
@@ -57,9 +72,9 @@ def eligible_lanes(lanes):
     return result
 
 # Define a function to allocate a truck to the lane with the least workload
-def allocate_lane(lanes, goods_keys, other_goods=""):
-    goods_keys = list(goods_keys)  # Ensure goods_keys is a list
-    processing_time = calculate_processing_time(goods_keys, other_goods)
+def allocate_lane(lanes, goods_names, other_goods=""):
+    goods_names = list(goods_names)  # Make sure that goods_names is a list
+    processing_time = calculate_processing_time(goods_names, other_goods)
     options = eligible_lanes(lanes)
     if not options:
         return None  # No eligible lanes available
