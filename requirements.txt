@@ -1,0 +1,5 @@
+# Package requirements for the project
+flask
+pymysql
+python-dotenv
+cryptography
