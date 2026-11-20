@@ -17,25 +17,25 @@ INSERT INTO admin_windows (window_number) VALUES (1), (2), (3), (4);
 
 INSERT INTO drivers (full_name, passport_number, nationality, contact_number, licence_number, licence_expiry) VALUES
     ('Sipho Dlamini', 'A12345678', 'South Africa', '+27821234567', 'C123456789', '2028-03-31'),
-    ('Maria Sitoe',   'AB1234567', 'Mozambique',   '+258841234567', 'MZ-55123',  '2027-08-15'),
-    ...;
+    ('Maria Sitoe',   'AB1234567', 'Mozambique',   '+258841234567', 'MZ-55123',  '2027-08-15')
+    ;
 
 INSERT INTO trucks (registration_number, country_registration, make_model, year, trailer_registration) VALUES
     ('ND 123-456', 'South Africa', 'Volvo FH 440', 2020, 'ND 654-321'),
-    ('AAA-123-MP', 'Mozambique',   'Scania R450',  2019, NULL),
-    ...;
+    ('AAA-123-MP', 'Mozambique',   'Scania R450',  2019, NULL)
+    ;
 
-INSERT INTO crossings (manifest_reference, driver_id, truck_id, status, lane_id, window_id, processing_minutes, predicted_wait_minutes, arrived_at, allocated_at, immigration_started_at, cleared_at, exited_at) VALUES
+INSERT INTO crossings (manifest_reference, driver_id, truck_id, crossing_status, lane_id, window_id, processing_minutes, predicted_wait_minutes, arrived_at, allocated_at, immigration_started_at, cleared_at, exited_at) VALUES
     ('MAN-2026-000101', 1, 1, 'exited', 2, 1, 8.5, 6.0,
         DATE_SUB(NOW(), INTERVAL 8640 MINUTE), DATE_SUB(NOW(), INTERVAL 8634 MINUTE),
         DATE_SUB(NOW(), INTERVAL 8620 MINUTE), DATE_SUB(NOW(), INTERVAL 8611 MINUTE),
         DATE_SUB(NOW(), INTERVAL 8598 MINUTE)),
     ('MAN-2026-000140', 2, 2, 'allocated', 3, 2, 6.0, 9.5,
         DATE_SUB(NOW(), INTERVAL 25 MINUTE), DATE_SUB(NOW(), INTERVAL 21 MINUTE),
-        NULL, NULL, NULL),
-    ...;
+        NULL, NULL, NULL)
+    ;
 
-INSERT INTO crossing_goods (crossing_id, category_id) VALUES (1, 1), (1, 4), (2, 5), ...;
+INSERT INTO crossing_goods (crossing_id, category_id) VALUES (1, 1), (1, 4), (2, 5);
 
 -- Audit trail that we generate from the timestamps above --
 INSERT INTO status_events (crossing_id, from_status, to_status, created_at)
@@ -43,16 +43,16 @@ INSERT INTO status_events (crossing_id, from_status, to_status, created_at)
 
 INSERT INTO status_events (crossing_id, from_status, to_status, created_at)
     SELECT id, 'registered', 'goods_declared', DATE_ADD(arrived_at, INTERVAL 2 MINUTE)
-    FROM crossings WHERE status <> 'registered';
+    FROM crossings WHERE crossing_status <> 'registered';
 
 INSERT INTO status_events (crossing_id, from_status, to_status, created_at)
     SELECT id, 'goods_declared', 'allocated', allocated_at FROM crossings WHERE allocated_at IS NOT NULL;
 
 INSERT INTO status_events (crossing_id, from_status, to_status, created_at)
     SELECT id, 'allocated', 'at_immigration', immigration_started_at FROM crossings WHERE immigration_started_at IS NOT NULL;
-
+    
 INSERT INTO status_events (crossing_id, from_status, to_status, created_at)
     SELECT id, 'at_immigration', 'cleared', cleared_at FROM crossings WHERE cleared_at IS NOT NULL;
-    
+
 INSERT INTO status_events (crossing_id, from_status, to_status, created_at)
     SELECT id, 'cleared', 'exited', exited_at FROM crossings WHERE exited_at IS NOT NULL;

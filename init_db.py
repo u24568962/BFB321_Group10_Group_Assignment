@@ -42,5 +42,6 @@ def main(reset=False):
         conn.commit()
     print("Done. Now run:  python app.py")
 
+
 if __name__ == "__main__":
-    main(reset="--reset" in sys.argv)
+    main(reset=True)
