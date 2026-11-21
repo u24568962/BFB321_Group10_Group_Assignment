@@ -1,68 +1,34 @@
+import os                                                          
+from flask import (Flask, flash, redirect, render_template, request, url_for)
+import db                                                          
+import models                                                      
 
-from flask import Flask, render_template, request
+app = Flask(__name__)                                             
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-only-change-me")
+db.init_app(app)
 
-app = Flask(__name__)
-
+# Canopy 1: this is the registration form 
+# This is to display the driver and the truck registration forms.
 @app.route("/")
-def home():
-    return render_template("index.html")
+def register():                                                    
+    return render_template("register.html", form={})               # created an empty form for registration info
 
-@app.route("/confirm", methods=["POST"])
-def confirm():
-    details = request.form.to_dict()
-    return render_template("confirm_details.html", details=details)
+@app.route("/confirm", methods=["POST"])  
+# now this validates the submitted information in the field before saving                         
+def confirm():  
+    values, errors = models.validate_registration(request.form)    
+    if not errors:
+        ok, message, crossing_id = models.register_crossing(values) 
+        #save the truck's registration info and get its ID                                                   
+  
+        if ok:                                                     
+            flash(message, "success")
+            return redirect(url_for("confirm_details",             
+                                    crossing_id=crossing_id))
+        errors.append(message)                                     
+    # go through every problem found and queue each error message for display
 
-@app.route("/goods")
-def goods():
-    return render_template("goods.html")
-
-#dictionary of goods labels for the checkboxes in the goods.html template
-goods_label = {
-    "electronics": "Electronics",
-    "furniture": "Furniture",
-    "clothing_textiles": "Clothing & Textiles",
-    "chemicals": "Chemicals",
-    "food_beverages": "Food & Beverages",
-    "automotive_parts": "Automotive Parts",
-    "machinery_parts": "Machinery & Parts",
-    "plastics": "Plastics",
-    "building_materials": "Building Materials",
-    "paper_products": "Paper Products"
-}
-
-@app.route("/confirm_goods", methods=["POST"])
-def confirm_goods():
-    form = request.form
-    #Keep goods in ticked checkboxes
-    def ticked(goods_key):
-        return goods_key in form
-
-    ticked_keys = filter(ticked, goods_label)
-
-    #Convert key to readable name
-    selected_goods = list(map(goods_label.get, ticked_keys))
-
-    #Get other goods  
-    other_goods = form.get("other_goods", "").strip()
-
-    return render_template(
-        "confirm_goods.html",
-        selected=selected_goods,
-        other_goods=other_goods,
-    )
-
-
-
-
-@app.route("/lane_allocation")
-def lane_allocation():
-    lane = 3  # Example allocation for now
-    return render_template("lane_allocation.html", lane=lane)
-
-@app.route("/admin_allocation")
-def admin_allocation():
-    window = 2  # Example allocation for now
-    return render_template("admin_allocation.html", window=window)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    for e in errors:
+        flash(e, "error")
+    return render_template("register.html",                        
+        form=request.form)                                         
