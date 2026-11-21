@@ -31,4 +31,18 @@ def confirm():
     for e in errors:
         flash(e, "error")
     return render_template("register.html",                        
-        form=request.form)                                         
+        form=request.form)  
+
+# Canopy 1: this part is to review the saved details of the truck driver and the truck 
+@app.route("/crossings/<int:crossing_id>")                         
+def confirm_details(crossing_id):   
+    # get the relevant details using the crossing_ID to call that information                               
+    crossing = models.get_crossing(crossing_id)  
+
+    # if not found it must return an error and go back to the registration page                
+    if crossing is None:
+        flash("Crossing not found.", "error")                      
+        return redirect(url_for("register"))    
+    # show the previously entered details on the confirmation page                   
+    return render_template("confirm_details.html", details=crossing)   
+
