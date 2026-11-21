@@ -54,7 +54,7 @@
             <!-- Navigation buttons -->
             <div class="review-actions d-flex justify-content-between"><!-- create a section containing the navigation buttons -->
 
-                <a href="{{ url_for('lane_allocation') }}"
+                <a href="{{ url_for('lane_allocation', crossing_id=crossing_id) }}"
                    class="btn btn-secondary"><!-- creates a back button that returns to the truck lane allocation page -->
                     Back
                 </a>
