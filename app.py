@@ -46,3 +46,67 @@ def confirm_details(crossing_id):
     # show the previously entered details on the confirmation page                   
     return render_template("confirm_details.html", details=crossing)   
 
+
+# Canopy 1: this section declares the goods carried by the truck
+@app.route("/crossings/<int:crossing_id>/goods")                   
+def goods(crossing_id):                                            
+    if models.get_crossing(crossing_id) is None:                   
+        flash("Crossing not found.", "error")
+        return redirect(url_for("register"))
+    return render_template("goods.html", crossing_id=crossing_id)  
+
+# confirm the goods that were declared
+@app.route("/crossings/<int:crossing_id>/goods/confirm",           
+           methods=["GET", "POST"])                                
+def confirm_goods(crossing_id):   
+    # get the crossing ID and first check that is exists                               
+    crossing = models.get_crossing(crossing_id)                    
+    if crossing is None:
+        flash("Crossing not found.", "error")
+        return redirect(url_for("register"))
+    # get the selected goods if the form was submitted
+    if request.method == "POST":                                   
+        form = request.form                                        
+        goods_label = {g["code"]: g["label"]                       
+                       for g in models.list_goods_categories()}    
+
+        # check which of the goods categories were selected
+        def ticked(goods_key):                                     
+            return goods_key in form                               
+
+        ticked_keys = list(filter(ticked, goods_label))            
+
+        # get any additional goods that was entered by the user that was not part of the common goods
+        other_goods = form.get("other_goods", "").strip()          
+
+        # this makes sure that at least one of the types of goods was selected
+        if not ticked_keys and not other_goods:                    
+            flash("Declare at least one item.", "error")
+            return redirect(url_for("goods", crossing_id=crossing_id))
+
+        # save declared goods
+        ok, message = models.declare_goods(crossing_id, ticked_keys, other_goods)   
+        flash(message, "success" if ok else "error")               
+        return redirect(url_for("confirm_goods",                   
+                                crossing_id=crossing_id))
+    
+    # display all the confirmed goods on the confirmation page
+    return render_template(                                       
+        "confirm_goods.html",                                      
+        selected=models.list_crossing_goods(crossing_id),          
+        other_goods=crossing["other_goods"],                       
+        crossing_id=crossing_id,                                   
+    )
+
+# Canopy 1: allocate a truck to the lane (this is done using our model)
+@app.route("/crossings/<int:crossing_id>/allocate", methods=["POST"])   
+def allocate(crossing_id):
+    # run the allocation model and get the result
+    ok, message = models.allocate_crossing(crossing_id)            
+    flash(message, "success" if ok else "error")   
+    # show the lane allocation but if it is not successful return to goods confirmation                
+    if ok:
+        return redirect(url_for("lane_allocation", crossing_id=crossing_id))
+    return redirect(url_for("confirm_goods", crossing_id=crossing_id))
+
+
