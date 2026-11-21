@@ -139,10 +139,48 @@ def register_crossing(v):
 
     except pymysql.err.IntegrityError:                             
         db.rollback()
-        return False, ("That manifest number or driver's licence number is "
+        return False, ("The manifest number or driver's licence number is "
                        "already registered."), None
     except Exception:                                              
         db.rollback()    #undo everything if there are errors                                         
+        raise                                                     
+
+# Save the goods
+def declare_goods(crossing_id, codes, other_goods):               
+    db = get_db()                                                  
+    try:                                                           
+        with db.cursor() as cur:                                   
+            cur.execute("SELECT crossing_status FROM crossings WHERE id = %s FOR UPDATE",
+                        (crossing_id,))
+            crossing = cur.fetchone()
+            if crossing is None:                                   
+                db.rollback()                                     
+                return False, "That crossing does not exist."
+            if crossing["crossing_status"] not in ("registered", "goods_declared"):
+                db.rollback()
+                return False, "A lane has already been allocated, so the goods can no longer change."
+
+            #replace the old list  
+            cur.execute("DELETE FROM crossing_goods WHERE crossing_id = %s", (crossing_id,))
+            for code in codes:
+                cur.execute(
+                    "INSERT INTO crossing_goods (crossing_id, category_id) "
+                    "SELECT %s, id FROM goods_categories WHERE code = %s",
+                    (crossing_id, code))
+            cur.execute(
+                "UPDATE crossings SET other_goods = %s, processing_minutes = %s, "
+                "crossing_status = 'goods_declared' WHERE id = %s",
+                (other_goods or None, calculate_processing_time(codes, other_goods),
+                 crossing_id))
+            if crossing["crossing_status"] == "registered":       # only the first time
+                cur.execute(
+                    "INSERT INTO status_events (crossing_id, from_status, to_status) "
+                    "VALUES (%s, 'registered', 'goods_declared')", (crossing_id,))
+
+        db.commit()                                                
+        return True, "Goods saved."
+    except Exception:                                              
+        db.rollback()                                              
         raise                                                     
 
 
