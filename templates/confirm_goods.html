@@ -71,9 +71,11 @@
 
                 <!-- the a is an anchor that creates a clickable link that takes the user to the lane allocation page-->
                 <!--Jinja uses Flask to find the URL for the lane_allocation function in our app.py python file-->
-                <a href="{{ url_for('lane_allocation') }}" class="btn btn-primary">
-                Confirm & Continue
-                </a>
+                <form method="post" action="{{ url_for('allocate', crossing_id=crossing_id) }}">
+                    <button type="submit" class="btn btn-primary">
+                    Confirm & Continue
+                    </button>
+                </form>
 
             </div>
 
