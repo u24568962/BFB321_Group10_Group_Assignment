@@ -1,11 +1,16 @@
 
-from flask import Flask, render_template, request
+import os
+from flask import Flask, flash, redirect, render_template, request, url_for
+import db
+import models
 
 app = Flask(__name__)
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-only-change-me")
+db.init_app(app)
 
 @app.route("/")
-def home():
-    return render_template("index.html")
+def index():
+    return render_template("index.html", stats=models.dashboard_stats(), hours=models.hourly_flow(12))
 
 @app.route("/confirm", methods=["POST"])
 def confirm():

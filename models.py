@@ -41,7 +41,7 @@ LANE_SELECT = """
 def list_lanes():
     return _add_lane_status(query_all(LANE_SELECT))
 
-# make a parameter-free query per number so that and empty days gives ero and not none
+# make a parameter-free query per number so that empty days gives ero and not none
 def dashboard_stats():
     pipeline = {r["status"]: r["n"] for r in query_all(
         "SELECT status, COUNT(*) AS n FROM crossings "
