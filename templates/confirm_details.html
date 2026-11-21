@@ -98,7 +98,7 @@
 
                 <!-- the a is achor that creates a clickable link that takes the user to the Goods page-->
                 <!--Jinja uses Flask to find the URL for the goods function in our app.py python file-->
-                <a href="{{ url_for('goods') }}" class="btn btn-primary">
+                <a href="{{ url_for('goods', crossing_id=details.id) }}" class="btn btn-primary">
                 Confirm & Continue
                 </a>
 

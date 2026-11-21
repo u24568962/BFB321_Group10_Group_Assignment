@@ -23,7 +23,7 @@
         <div class="card-body">
             <!-- create a form that sends the input information to the confirm 
               function in Flask using  POST method -->
-            <form action="{{ url_for('confirm_goods') }}" method="POST">
+            <form action="{{ url_for('confirm_goods', crossing_id=crossing_id) }}" method="POST">
                 <section class="form-section"><!-- group form fields together and apply styling from style.css-->
                     <h5 class="card-title mb-4"><!-- heading of form (mb-4 is bootstrap)-->
                         <span class="section-number">01</span> <!-- styled with custom css class-->

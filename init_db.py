@@ -44,4 +44,5 @@ def main(reset=False):
 
 
 if __name__ == "__main__":
-    main(reset=True)
+        main(reset="--reset" in sys.argv)
+

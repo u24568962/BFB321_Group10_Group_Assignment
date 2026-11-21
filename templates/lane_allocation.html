@@ -28,6 +28,8 @@
                     style="color: var(--forest);">
                     {{ lane }}
                 </h1>
+                <p class="text-muted">Predicted wait in this lane: {{ wait }} min</p>
+
 
                 <div class="row g-2 my-4"> <!-- create a row to display all five of the truck lanes -->
                     {% for number in range(1, 6) %}<!-- create a loop through lane numbers from 1 to 5 -->
@@ -61,7 +63,7 @@
             </div>
 
             <div class="form-actions"><!-- create the section for the Continue button -->
-                <a href="{{ url_for('admin_allocation') }}"
+                                <a href="{{ url_for('admin_allocation', crossing_id=crossing_id) }}"
                    class="btn btn-primary"><!-- link to the admin allocation page using the Flask route name -->
                     Continue
                 </a>
