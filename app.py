@@ -109,4 +109,34 @@ def allocate(crossing_id):
         return redirect(url_for("lane_allocation", crossing_id=crossing_id))
     return redirect(url_for("confirm_goods", crossing_id=crossing_id))
 
+# Canopy 1: this part shows the allocated lane and window 
+@app.route("/crossings/<int:crossing_id>/lane")                    
+def lane_allocation(crossing_id):  
+    # get the details and check if a lane has already been allocated                                
+    crossing = models.get_crossing(crossing_id)                    
+    if crossing is None or crossing["lane_number"] is None:
+        flash("This truck has not been allocated a lane yet.", "error")
+        return redirect(url_for("register"))
+    # display the allocated lane and the predicted waiting time that was calculated from the model
+    return render_template("lane_allocation.html",                 
+        lane=crossing["lane_number"],                              
+        wait=crossing["predicted_wait_minutes"],                   
+        crossing_id=crossing_id)                                   
+
+# Canopy 1: this part shows the admin window that was allocated
+@app.route("/crossings/<int:crossing_id>/window")                  
+def admin_allocation(crossing_id): 
+    # get the details and see if a window has been allocated already                                
+    crossing = models.get_crossing(crossing_id)                    
+    if crossing is None or crossing["window_number"] is None:
+        flash("This truck has not been allocated a window yet.", "error")
+        return redirect(url_for("register"))
+    # display the allocated window
+    return render_template("admin_allocation.html",                
+        window=crossing["window_number"],                          
+        crossing_id=crossing_id)                                   
+
+
+if __name__ == "__main__":                                         
+    app.run(debug=True)                                            
 
