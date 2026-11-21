@@ -81,6 +81,71 @@ def validate_registration(form):
         errors.append("Year must be between 1950 and 2100.")
     return values, errors
 
+# Save one transaction
+def register_crossing(v):                                          
+    db = get_db()                                                  
+    try:                                                           
+        with db.cursor() as cur:                                   
+            # driver checks and insert or update
+            cur.execute("SELECT id FROM drivers WHERE passport_number = %s FOR UPDATE",
+                        (v["passport_number"],))
+            driver = cur.fetchone()
+            if driver is None:
+                cur.execute(
+                    "INSERT INTO drivers (full_name, passport_number, nationality, "
+                    "contact_number, licence_number) VALUES (%s, %s, %s, %s, %s)",
+                    (v["full_name"], v["passport_number"], v["nationality"],
+                     v["contact_number"], v["licence_number"]))
+                driver_id = cur.lastrowid
+            else:
+                driver_id = driver["id"]
+                cur.execute(
+                    "UPDATE drivers SET full_name = %s, nationality = %s, "
+                    "contact_number = %s, licence_number = %s WHERE id = %s",
+                    (v["full_name"], v["nationality"], v["contact_number"],
+                     v["licence_number"], driver_id))
+
+            # trucks with registration checks  
+            cur.execute("SELECT id FROM trucks WHERE registration_number = %s FOR UPDATE",
+                        (v["registration_number"],))
+            truck = cur.fetchone()
+            if truck is None:
+                cur.execute(
+                    "INSERT INTO trucks (registration_number, country_registration, "
+                    "make_model, year, trailer_registration) VALUES (%s, %s, %s, %s, %s)",
+                    (v["registration_number"], v["country_registration"],
+                     v["make_model"], v["year"], v["trailer_registration"]))
+                truck_id = cur.lastrowid
+            else:
+                truck_id = truck["id"]
+                cur.execute(
+                    "UPDATE trucks SET country_registration = %s, make_model = %s, "
+                    "year = %s, trailer_registration = %s WHERE id = %s",
+                    (v["country_registration"], v["make_model"], v["year"],
+                     v["trailer_registration"], truck_id))
+
+            #crossing and audit
+            cur.execute(
+                "INSERT INTO crossings (manifest_reference, driver_id, truck_id) "
+                "VALUES (%s, %s, %s)",
+                (v["manifest_reference"], driver_id, truck_id))
+            crossing_id = cur.lastrowid
+            cur.execute(
+                "INSERT INTO status_events (crossing_id, from_status, to_status) "
+                "VALUES (%s, NULL, 'registered')", (crossing_id,))
+
+        db.commit()                                               
+        return True, f"Truck {v['registration_number']} registered.", crossing_id
+
+    except pymysql.err.IntegrityError:                             
+        db.rollback()
+        return False, ("That manifest number or driver's licence number is "
+                       "already registered."), None
+    except Exception:                                              
+        db.rollback()    #undo everything if there are errors                                         
+        raise                                                     
+
+
 
 
 
