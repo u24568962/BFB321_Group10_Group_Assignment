@@ -34,6 +34,13 @@
     <!-- main content area of the webpage -->
     <!-- the container again uses bootstrap to make everything nice and centered-->
     <main class="container">
+        <!-- this shows flash messages sent from app.py as a bootstrap to alert -->
+<!-- the 'error' is changed to 'danger',bootstrap makes use of alert danger for red messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ 'danger' if category == 'error' else category }} mt-3">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
         {% block content %}
         {% endblock %}
     </main>

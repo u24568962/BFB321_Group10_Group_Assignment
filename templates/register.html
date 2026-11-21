@@ -25,6 +25,7 @@
              <!-- create a form that sends the input information to the confirm 
               function in Flask using  POST method -->
             <form action="{{ url_for('confirm') }}" method="POST"> 
+                <!-- value="{{ form.x or '' }}" it puts back what the user using the wedsite typed if the page is reloaded with an error, so they do not have to re enter everything -->
                 <section class="form-section"> <!-- group form fields together and apply styling from style.css-->
                     <h5 class="card-title mb-4"> <!-- heading of form (mb-4 is bootstrap)-->
                         <span class="section-number">01</span> <!-- styled with custom css class-->
@@ -34,31 +35,31 @@
                 <div class="row mb-3"> <!-- new Bootstrap row -->
                     <div class="col-md-6"> <!-- bootstrap column (grid system) takes up 6/12 width -->
                         <label for="driver_name" class="form-label">Driver Name</label> 
-                        <input type="text" id="driver_name" name="driver_name" class="form-control" required>
+                        <input type="text" id="driver_name" name="driver_name" class="form-control" value="{{ form.driver_name or '' }}" required>
                     </div>
 
                     <div class="col-md-6"> <!-- this is now the column on the rhs-->
                         <label for="passport_number" class="form-label">Passport Number</label>
-                        <input type="text" id="passport_number" name="passport_number" class="form-control" required>
+                        <input type="text" id="passport_number" name="passport_number" class="form-control" value="{{ form.passport_number or '' }}" required>
                     </div>
                 </div>
 
                 <div class="row mb-3"> <!-- the next row of input columns -->
                     <div class="col-md-6">
                         <label for="nationality" class="form-label">Nationality</label>
-                        <input type="text" id="nationality" name="nationality" class="form-control" required>
+                        <input type="text" id="nationality" name="nationality" class="form-control" value="{{ form.nationality or '' }}" required>
                     </div>
 
                     <div class="col-md-6">
                         <label for="contact_number" class="form-label">Contact Number</label>
-                        <input type="tel" id="contact_number" name="contact_number" class="form-control" required>
+                        <input type="tel" id="contact_number" name="contact_number" class="form-control" value="{{ form.contact_number or '' }}" required>
                     </div>
                 </div>
 
                 <div class="row mb-3"> <!-- the last row only contains a sigle input-->
                     <div class="col-md-6"> <!-- i still want this to only use 6/12 "slots" because i want it lined up -->
                         <label for="licence_number" class="form-label">Driver's Licence Number</label>
-                        <input type="text" id="licence_number" name="licence_number" class="form-control" required>
+                        <input type="text" id="licence_number" name="licence_number" class="form-control" value="{{ form.licence_number or '' }}" required>
                     </div>
                 </div>
                 </section>
@@ -73,37 +74,37 @@
                 <div class="row mb-3"> 
                     <div class="col-md-6">
                         <label for="truck_registration" class="form-label">Truck Registration Number</label>
-                        <input type="text" id="truck_registration" name="truck_registration" class="form-control" required>
+                        <input type="text" id="truck_registration" name="truck_registration" class="form-control" value="{{ form.truck_registration or '' }}" required>
                     </div>
 
                     <div class="col-md-6">
                         <label for="country_registration" class="form-label">Country of Registration</label>
-                        <input type="text" id="country_registration" name="country_registration" class="form-control" required>
+                        <input type="text" id="country_registration" name="country_registration" class="form-control" value="{{ form.country_registration or '' }}" required>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="make_model" class="form-label">Make / Model</label>
-                        <input type="text" id="make_model" name="make_model" class="form-control">
+                         <input type="text" id="make_model" name="make_model" class="form-control" value="{{ form.make_model or '' }}">
                     </div>
 
                     <div class="col-md-6">
                         <label for="year" class="form-label">Year</label>
                         <!-- in the input i added a min max limits so that i could prevent people from entering invalid or unrealistic years and so help with data accuracy -->
-                        <input type="number" id="year" name="year" class="form-control" min="1950" max="2027"> 
+                        <input type="number" id="year" name="year" class="form-control" min="1950" max="2027" value="{{ form.year or '' }}"> 
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="trailer_registration" class="form-label">Trailer Registration Number</label>
-                        <input type="text" id="trailer_registration" name="trailer_registration" class="form-control">
+                        <input type="text" id="trailer_registration" name="trailer_registration" class="form-control" value="{{ form.trailer_registration or '' }}">
                     </div>
 
                     <div class="col-md-6">
                         <label for="manifest_reference" class="form-label">Manifest Reference Number</label>
-                        <input type="text" id="manifest_reference" name="manifest_reference" class="form-control" required>
+                        <input type="text" id="manifest_reference" name="manifest_reference" class="form-control" value="{{ form.manifest_reference or '' }}" required>
                     </div>
                 </div>
                 </section>
