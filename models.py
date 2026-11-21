@@ -181,7 +181,94 @@ def declare_goods(crossing_id, codes, other_goods):
         return True, "Goods saved."
     except Exception:                                              
         db.rollback()                                              
-        raise                                                     
+        raise     
+
+# Allocate the lane and the windows
+WINDOW_SQL = """
+    SELECT w.id, w.window_number,
+           COALESCE(SUM(c.processing_minutes), 0) AS workload_minutes
+    FROM admin_windows w
+    LEFT JOIN crossings c
+           ON c.window_id = w.id
+          AND c.crossing_status IN ('allocated', 'at_immigration')
+    WHERE w.is_open = 1
+    GROUP BY w.id, w.window_number
+    ORDER BY workload_minutes, w.window_number
+    LIMIT 1
+"""
+
+def allocate_crossing(crossing_id):                                
+    db = get_db()                                                  
+    try:                                                           
+        with db.cursor() as cur:                                   
+            cur.execute("SELECT crossing_status, other_goods FROM crossings "
+                        "WHERE id = %s FOR UPDATE", (crossing_id,))
+            crossing = cur.fetchone()
+            if crossing is None:                                   
+                db.rollback()                                      
+                return False, "That crossing does not exist."
+            if crossing["crossing_status"] != "goods_declared":
+                db.rollback()
+                if crossing["crossing_status"] == "registered":
+                    return False, "Declare the goods before allocating a lane."
+                return True, "This truck already has a lane."      
+
+            #lock the lanes and build the models
+            cur.execute("SELECT id FROM lanes WHERE active = 1 FOR UPDATE")
+            cur.execute("""
+                SELECT l.id, l.lane_number, l.capacity, c.processing_minutes
+                FROM lanes l
+                LEFT JOIN crossings c
+                       ON c.lane_id = l.id
+                      AND c.crossing_status IN ('allocated', 'at_immigration')
+                WHERE l.active = 1
+                ORDER BY l.lane_number
+            """)
+            lanes, lane_ids = {}, {}
+            for row in cur.fetchall():
+                number = row["lane_number"]
+                if number not in lanes:
+                    lanes[number] = make_lane(number, row["capacity"])       
+                    lane_ids[number] = row["id"]
+                if row["processing_minutes"] is not None:
+                    lanes[number]["queue"].append(float(row["processing_minutes"]))
+
+            #let the model choose the lane    
+            cur.execute("SELECT g.code FROM crossing_goods cg "
+                        "JOIN goods_categories g ON g.id = cg.category_id "
+                        "WHERE cg.crossing_id = %s", (crossing_id,))
+            codes = [r["code"] for r in cur.fetchall()]
+            result = allocate_lane(list(lanes.values()), codes,               
+                                   crossing["other_goods"] or "")
+            if result is None:                                    
+                db.rollback()                                      
+                return False, "All lanes are full. Ask the driver to wait and try again."
+
+            #choose a window that is open with the smallest workload
+            cur.execute(WINDOW_SQL)
+            window = cur.fetchone()
+            if window is None:
+                db.rollback()
+                return False, "No admin window is open."
+
+            #save allocation + audit
+            cur.execute(
+                "UPDATE crossings SET crossing_status = 'allocated', lane_id = %s, "
+                "window_id = %s, processing_minutes = %s, predicted_wait_minutes = %s, "
+                "allocated_at = NOW() WHERE id = %s",
+                (lane_ids[result["lane"]], window["id"], result["processing_min"],
+                 result["predicted_wait_min"], crossing_id))
+            cur.execute(
+                "INSERT INTO status_events (crossing_id, from_status, to_status) "
+                "VALUES (%s, 'goods_declared', 'allocated')", (crossing_id,))
+
+        db.commit()                                                
+        return True, (f"Lane {result['lane']}, admin window {window['window_number']}. "
+                      f"Predicted wait {result['predicted_wait_min']} min.")
+    except Exception:                                              
+        db.rollback()                                              
+        raise                                                      
+
 
 
 
