@@ -267,7 +267,20 @@ def allocate_crossing(crossing_id):
                       f"Predicted wait {result['predicted_wait_min']} min.")
     except Exception:                                              
         db.rollback()                                              
-        raise                                                      
+        raise  
+
+# create labels and badge colours for the crossing stages
+STATUS_LABELS = {"registered": "Registered", "goods_declared": "Goods declared", "allocated": "Waiting for immigration", "at_immigration": "At immigration", "cleared": "Cleared", "exited": "Exited"}
+
+STATUS_BADGES = {"registered": "secondary", "goods_declared": "info", "allocated": "primary", "at_immigration": "warning", "cleared": "success", "exited": "dark"}
+
+#add the stage rows
+def _add_stage(rows):
+    for row in rows:
+        row["stage"] = STATUS_LABELS[row["crossing_status"]]
+        row["stage_badge"] = STATUS_BADGES[row["crossing_status"]]
+    return rows
+                                                
 
 
 
