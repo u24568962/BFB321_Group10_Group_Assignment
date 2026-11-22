@@ -1,0 +1,25 @@
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <header class="page-heading">
+            <div class="eyebrow">Staff sign in</div>
+            <h2>Log in</h2>
+        </header>
+        <div class="card shadow-sm"><div class="card-body">
+            <form method="POST" action="{{ url_for('login') }}">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Log in</button>
+                </div>
+            </form>
+        </div></div>
+    </div>
+</div>
+{% endblock %}
