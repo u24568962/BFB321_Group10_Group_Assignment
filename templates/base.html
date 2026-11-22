@@ -27,7 +27,15 @@
                 <span>Lebombo Border Post</span>
             </span>
             <!-- the navbar-note is custom styling from the style.css file-->
-            <span class="navbar-note">Border crossing · Mozambique · South Africa</span>
+                        {% set ep = request.endpoint or '' %}
+            <div class="navbar-nav flex-row gap-3">
+                <a class="nav-link {{ 'active' if ep == 'index' }}" href="{{ url_for('index') }}">Overview</a>
+                <a class="nav-link {{ 'active' if ep in ('register', 'confirm', 'confirm_details', 'edit_crossing', 'goods', 'confirm_goods', 'lane_allocation', 'admin_allocation') }}"
+                   href="{{ url_for('register') }}">Canopy 1</a>
+                <a class="nav-link {{ 'active' if ep == 'immigration' }}" href="{{ url_for('immigration') }}">Immigration</a>
+                <a class="nav-link {{ 'active' if ep == 'canopy2' }}" href="{{ url_for('canopy2') }}">Canopy 2</a>
+            </div>
+
         </div>
     </nav>
 
