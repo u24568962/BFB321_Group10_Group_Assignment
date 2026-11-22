@@ -13,12 +13,13 @@ def connect():
         port=int(os.getenv("DB_PORT", "3306")),
         user=os.getenv("DB_USER", "avnadmin"),
         password=os.getenv("DB_PASSWORD", ""),
-        database=os.getenv("DB_NAME", "lebombo"),
+        database=(os.getenv("TEST_DB_NAME", "lebombo_test") if os.getenv("FLASK_ENV") == "testing"
+                  else os.getenv("DB_NAME", "lebombo")),
         charset="utf8mb4",
-        cursorclass=pymysql.cursors.DictCursor,   # every row is a dict: row["full_name"]
-        autocommit=False,                         # nothing is saved until WE call commit()
+        cursorclass=pymysql.cursors.DictCursor,   # every row is a dict
+        autocommit=False,                         # nothing is saved until call commit()
         connect_timeout=15,
-        init_command="SET time_zone = '+02:00'",  # our addition, see below
+        init_command="SET time_zone = '+02:00'",  
     )
     return pymysql.connect(**options)
 

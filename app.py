@@ -1,14 +1,29 @@
+import logging
+import os
+
 import bcrypt
-from flask import session
-import os                                                          
-from flask import (Flask, flash, redirect, render_template, request, url_for)
-import db                                                          
-import models                                                      
-from api import api 
-app = Flask(__name__)                                             
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-only-change-me")
+from flask import (Flask, flash, jsonify, redirect, render_template,
+                   request, session, url_for)
+
+import db
+import models
+from api import api
+from config import CONFIGS
+
+app = Flask(__name__)
+# SECRET_KEY now comes from config.py (Config.SECRET_KEY)
+app.config.from_object(CONFIGS.get(os.getenv("FLASK_ENV", "development"), CONFIGS["development"]))
 db.init_app(app)
 app.register_blueprint(api)
+
+
+os.makedirs(os.path.join(db.BASE_DIR, "logs"), exist_ok=True)
+logging.basicConfig(
+    level=app.config["LOG_LEVEL"],
+    format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    handlers=[logging.StreamHandler(),
+              logging.FileHandler(os.path.join(db.BASE_DIR, "logs", "app.log"), encoding="utf-8")])
+
 @app.route("/")
 def index():
     return render_template("index.html",
@@ -55,6 +70,7 @@ def confirm():
   
         if ok:                                                     
             flash(message, "success")
+            app.logger.info("Crossing %s registered", crossing_id)
             return redirect(url_for("confirm_details",             
                                     crossing_id=crossing_id))
         errors.append(message)                                     
@@ -135,7 +151,8 @@ def confirm_goods(crossing_id):
 def allocate(crossing_id):
     # run the allocation model and get the result
     ok, message = models.allocate_crossing(crossing_id)            
-    flash(message, "success" if ok else "error")   
+    flash(message, "success" if ok else "error")
+    app.logger.info("Allocate crossing %s: %s", crossing_id, message) 
     # show the lane allocation but if it is not successful return to goods confirmation                
     if ok:
         return redirect(url_for("lane_allocation", crossing_id=crossing_id))
@@ -186,6 +203,7 @@ def canopy2():
 def advance(crossing_id):
     expected = request.form.get("expected_status", "")
     ok, message = models.advance_crossing(crossing_id, expected, session.get("user_id"))
+    app.logger.info("Advance crossing %s from %s: %s", crossing_id, expected, message)
     flash(message, "success" if ok else "error")
     # go back to board the button was on
     
@@ -231,6 +249,30 @@ def require_login():
         return redirect(url_for("index"))
 
 
+#Added the error handlers
+def _error(code, message):
+    if request.path.startswith("/api/"):
+        return jsonify(error=message), code
+    return render_template("error.html", code=code, message=message), code
+
+@app.errorhandler(400)
+def bad_request(e):
+    return _error(400, "The request was not valid.")
+
+@app.errorhandler(404)
+def not_found(e):
+    return _error(404, "That page does not exist.")
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    return _error(405, "That action is not allowed here.")
+
+@app.errorhandler(500)
+def server_error(e):
+    app.logger.error("Server error on %s %s", request.method, request.path,
+                     exc_info=getattr(e, "original_exception", e))
+    return _error(500, "Something went wrong. The error was logged.")
+
 if __name__ == "__main__":                                         
-    app.run(debug=True)                                            
+    app.run(debug=app.config["DEBUG"])
 
