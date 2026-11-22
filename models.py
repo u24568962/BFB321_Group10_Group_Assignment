@@ -446,6 +446,24 @@ def hourly_flow(hours=12):
         h["height"] = max(8, round(h["arrivals"] / top * 100)) if h["arrivals"] else 8
     return out
 
+#use queieng model with live data  
+#predict the wait at admin windows (M/M/c)
+def queue_prediction():
+    arrivals = query_one("SELECT COUNT(*) AS n FROM crossings "
+                         "WHERE arrived_at >= NOW() - INTERVAL 1 HOUR")["n"]
+    service = query_one("SELECT AVG(processing_minutes) AS m FROM crossings "
+                        "WHERE processing_minutes IS NOT NULL")["m"]
+    windows = query_one("SELECT COUNT(*) AS n FROM admin_windows WHERE is_open = 1")["n"]
+    if not service or not windows:
+        return None
+    try:
+        result = mmc_metrics(arrivals / 60, 1 / float(service), windows)
+    except ValueError:  # utilisation >= 1 (model keeps growing)
+        return dict(overloaded=True, windows=windows)
+    result.update(overloaded=False, windows=windows, arrivals_per_hour=arrivals)
+    return result
+
+
 
 
 
