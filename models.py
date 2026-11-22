@@ -280,7 +280,74 @@ def _add_stage(rows):
         row["stage"] = STATUS_LABELS[row["crossing_status"]]
         row["stage_badge"] = STATUS_BADGES[row["crossing_status"]]
     return rows
-                                                
+
+#make a list ofnthe trucks with window and lane that are not cleared  
+def list_immigration_queue():
+    rows = query_all(CROSSING_SELECT + """
+        WHERE c.crossing_status IN ('allocated', 'at_immigration')
+        ORDER BY w.window_number, c.allocated_at
+    """)
+    return _add_goods(_add_stage(rows))
+
+#make a list oft he cleared trucks that can leave
+def list_ready_to_exit():
+    rows = query_all(CROSSING_SELECT + """
+        WHERE c.crossing_status = 'cleared'
+        ORDER BY c.cleared_at
+    """)
+    return _add_goods(_add_stage(rows))
+
+# put the declared goods at the row so officer sees them  
+def _add_goods(rows):
+    for row in rows:
+        row["goods"] = list_crossing_goods(row["id"])
+    return rows
+
+# We need to move the trucks to the next step
+#show next status and time of steps
+NEXT_STEP = {
+    "allocated": ("at_immigration",
+        "UPDATE crossings SET crossing_status = 'at_immigration', "
+        "immigration_started_at = NOW() WHERE id = %s"),
+    "at_immigration": ("cleared",
+        "UPDATE crossings SET crossing_status = 'cleared', "
+        "cleared_at = NOW() WHERE id = %s"),
+    "cleared": ("exited",
+        "UPDATE crossings SET crossing_status = 'exited', "
+        "exited_at = NOW() WHERE id = %s"),
+}
+
+def advance_crossing(crossing_id, expected_status, user_id=None):
+    if expected_status not in NEXT_STEP:
+        return False, "Truck cannot move to next step."
+    new_status, update_sql = NEXT_STEP[expected_status]
+    db = get_db()
+    try:
+        with db.cursor() as cur:
+            #lock crossing, two officials cant click same truck at same time
+            cur.execute("SELECT crossing_status FROM crossings WHERE id = %s FOR UPDATE",
+                        (crossing_id,))
+            crossing = cur.fetchone()
+            if crossing is None:
+                db.rollback()
+                return False, "Crossing does not exist."
+            if crossing["crossing_status"] != expected_status:
+                db.rollback()
+                return False, "Truck already moved to next step."
+
+            cur.execute(update_sql, (crossing_id,))
+            cur.execute(
+                "INSERT INTO status_events (crossing_id, from_status, to_status, user_id) "
+                "VALUES (%s, %s, %s, %s)",
+                (crossing_id, expected_status, new_status, user_id))
+
+        db.commit() # status+ audit row saved together
+        return True, f"Truck moved to '{STATUS_LABELS[new_status]}'."
+    except Exception:
+        db.rollback() # undo both
+        raise
+
+                          
 
 
 
