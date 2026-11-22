@@ -1,7 +1,8 @@
 import pymysql
 
 from db import get_db, query_all, query_one
-from supply_chain.lane_allocation import allocate_lane, calculate_processing_time, make_lane #call lane allogation and logic
+from datetime import datetime, timedelta
+from supply_chain.lane_allocation import mmc_metrics, allocate_lane, calculate_processing_time, make_lane  #call lane allogation and logic
 
 # Read a crossing from the databse
 # Use left join only for the lane and window as a new crossing doesnt have any yet and join will hide them
