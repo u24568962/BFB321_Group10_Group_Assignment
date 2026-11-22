@@ -17,7 +17,7 @@ def test_processing_time_unknown_category_ignored():
     assert calculate_processing_time(["spaceships"]) == 4.0
 
 def test_empty_lanes_tie_goes_to_lane_1():
-    # all 5 lanes empty (workload 0) -> lowest lane number wins, no wait
+    #all 5 lanes empty (workload 0) -> lowest lane number wins, no wait
     result = allocate_lane(default_lanes(), ["electronics"])
     assert result == {"lane": 1, "predicted_wait_min": 0.0, "processing_min": 5.5}
 
