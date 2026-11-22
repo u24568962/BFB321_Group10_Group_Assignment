@@ -259,6 +259,17 @@ form .row {
     padding: 0.85rem 1rem;
 }
 
+/* Immigration and Canopy 2 queue tables have many columns, so the 40% header
+   width above is switched off here and the buttons stay on one line */
+.queue-table th {
+    width: auto;
+    white-space: nowrap;
+}
+
+.queue-table .btn {
+    white-space: nowrap;
+}
+
 .table td {
     overflow-wrap: anywhere;
     background-color: #fff;
