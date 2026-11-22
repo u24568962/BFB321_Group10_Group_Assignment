@@ -19,6 +19,27 @@ def index():
 @app.route("/register")
 def register():                                                    
     return render_template("register.html", form={})               # created an empty form for registration info
+#Editing the canopy truck dreiver d4tails
+@app.route("/crossings/<int:crossing_id>/edit", methods=["GET", "POST"])
+def edit_crossing(crossing_id):
+    crossing = models.get_crossing(crossing_id)
+    if crossing is None:
+        flash("Crossing not found.", "error")
+        return redirect(url_for("register"))
+
+    if request.method == "POST":
+        values, errors = models.validate_registration(request.form)
+        if not errors:
+            ok, message = models.update_crossing(crossing_id, values)
+            flash(message, "success" if ok else "error")
+            if ok:
+                return redirect(url_for("confirm_details", crossing_id=crossing_id))
+        for e in errors:
+            flash(e, "error")
+        crossing = request.form          # keep everyhting that the user typed. 
+
+    return render_template("register.html", form=crossing,
+                           editing=True, crossing_id=crossing_id)
 
 @app.route("/confirm", methods=["POST"])  
 # now this validates the submitted information in the field before saving                         
