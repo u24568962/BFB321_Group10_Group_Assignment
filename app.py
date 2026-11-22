@@ -2,11 +2,11 @@ import os
 from flask import (Flask, flash, redirect, render_template, request, url_for)
 import db                                                          
 import models                                                      
-
+from api import api 
 app = Flask(__name__)                                             
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-only-change-me")
 db.init_app(app)
-
+app.register_blueprint(api)
 @app.route("/")
 def index():
     return render_template("index.html",
