@@ -2,8 +2,8 @@ import pymysql
 
 from db import get_db, query_all, query_one
 from datetime import datetime, timedelta
-from supply_chain.queueing_theory import mmc_metrics
 from supply_chain.lane_allocation import allocate_lane, calculate_processing_time, make_lane  #call lane allogation and logic
+from supply_chain.queueing_theory import mmc_metrics  #M/M/c queueing model for admin windows
 
 # Read a crossing from the databse
 # Use left join only for the lane and window as a new crossing doesnt have any yet and join will hide them
@@ -145,9 +145,9 @@ def register_crossing(v):
                        "already registered."), None
     except Exception:                                              
         db.rollback()    #undo everything if there are errors                                         
-        raise                                                     
+        raise     
 
-# THis provides functionality for the edit button 
+# Update driver, truck and manifest of a crossing
 def update_crossing(crossing_id, v):
     db = get_db()
     try:
@@ -175,12 +175,13 @@ def update_crossing(crossing_id, v):
 
         db.commit()
         return True, "Details updated."
-    except pymysql.err.IntegrityError:          # The number is already in use 
+    except pymysql.err.IntegrityError:     #number used already by someone else
         db.rollback()
         return False, ("Another driver, truck or manifest already uses one of those numbers.")
     except Exception:
         db.rollback()
         raise
+
 # Save the goods
 def declare_goods(crossing_id, codes, other_goods):               
     db = get_db()                                                  
