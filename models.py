@@ -363,7 +363,6 @@ def _add_lane_status(rows):
     for row in rows:
         row["status"], row["badge"] = lane_status(row["occupied"], row["capacity"], row["active"])
     return rows
-
 #use left join to keep the empty lanes in rhe list 
 LANE_SELECT = """
     SELECT l.id, l.lane_number, l.capacity, l.active,
