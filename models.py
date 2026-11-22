@@ -2,7 +2,8 @@ import pymysql
 
 from db import get_db, query_all, query_one
 from datetime import datetime, timedelta
-from supply_chain.lane_allocation import mmc_metrics, allocate_lane, calculate_processing_time, make_lane  #call lane allogation and logic
+from supply_chain.lane_allocation import allocate_lane, calculate_processing_time, make_lane  #call lane allogation and logic
+from supply_chain.queueing_theory import mmc_metrics  #M/M/c queueing model for admin windows
 
 # Read a crossing from the databse
 # Use left join only for the lane and window as a new crossing doesnt have any yet and join will hide them
@@ -144,8 +145,43 @@ def register_crossing(v):
                        "already registered."), None
     except Exception:                                              
         db.rollback()    #undo everything if there are errors                                         
-        raise                                                     
+        raise     
 
+# Update driver, truck and manifest of a crossing
+def update_crossing(crossing_id, v):
+    db = get_db()
+    try:
+        with db.cursor() as cur:
+            cur.execute("SELECT driver_id, truck_id FROM crossings WHERE id = %s FOR UPDATE",
+                        (crossing_id,))
+            row = cur.fetchone()
+            if row is None:
+                db.rollback()
+                return False, "That crossing does not exist."
+
+            cur.execute(
+                "UPDATE drivers SET full_name = %s, passport_number = %s, nationality = %s, "
+                "contact_number = %s, licence_number = %s WHERE id = %s",
+                (v["full_name"], v["passport_number"], v["nationality"],
+                 v["contact_number"], v["licence_number"], row["driver_id"]))
+            cur.execute(
+                "UPDATE trucks SET registration_number = %s, country_registration = %s, "
+                "make_model = %s, year = %s, trailer_registration = %s WHERE id = %s",
+                (v["registration_number"], v["country_registration"], v["make_model"],
+                 v["year"], v["trailer_registration"], row["truck_id"]))
+            cur.execute(
+                "UPDATE crossings SET manifest_reference = %s WHERE id = %s",
+                (v["manifest_reference"], crossing_id))
+
+        db.commit()
+        return True, "Details updated."
+    except pymysql.err.IntegrityError:     #number used already by someone else
+        db.rollback()
+        return False, ("Another driver, truck or manifest already uses one of those numbers.")
+    except Exception:
+        db.rollback()
+        raise
+                                                
 # Save the goods
 def declare_goods(crossing_id, codes, other_goods):               
     db = get_db()                                                  
