@@ -501,6 +501,19 @@ def queue_prediction():
 
 
 
+# List crossings for the API endpoint 
+def list_crossings(status=None, page=1, size=20):
+    sql = CROSSING_SELECT + " WHERE 1=1"
+    count_sql = "SELECT COUNT(*) AS n FROM crossings c WHERE 1=1"
+    params = []
+    if status:
+        sql += " AND c.crossing_status = %s"
+        count_sql += " AND c.crossing_status = %s"
+        params.append(status)
+    total = query_one(count_sql, params)["n"]
+    sql += " ORDER BY c.arrived_at DESC, c.id DESC LIMIT %s OFFSET %s"
+    rows = query_all(sql, params + [size, (page - 1) * size])
+    return _add_stage(rows), total
 
                           
 
