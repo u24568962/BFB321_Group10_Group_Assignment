@@ -1,0 +1,192 @@
+<!-- use the layout from base.html -->
+{% extends "base.html" %}
+{% block title %}Overview - Lebombo Border Post{% endblock %}
+
+{% block content %}
+
+<div>
+    <header class="page-heading">
+        <div class="eyebrow">Overview · Today</div>
+        <h2 class="mb-3">Border Overview</h2>
+        <p class="text-muted">Every number on this page is calculated from the crossings database</p>
+    </header>
+
+    <!-- KPI cards -->
+    <section class="mb-4">
+        <h5 class="mb-3"><span class="section-number">01</span> Key numbers</h5>
+        <div class="row g-3" aria-live="polite">
+            <div class="col-6 col-lg">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <div class="text-muted small">Trucks in border now</div>
+                    <div class="fs-3 fw-semibold">{{ stats.in_border }}</div>
+                </div></div>
+            </div>
+            <div class="col-6 col-lg">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <div class="text-muted small">Arrived today</div>
+                    <div class="fs-3 fw-semibold">{{ stats.arrivals_today }}</div>
+                    <!-- growth is None when there were no arrivals yesterday, so show a dash -->
+                    <div class="small text-muted">
+                        {{ '%+.0f'|format(stats.growth) ~ '% vs yesterday' if stats.growth is not none else '–' }}
+                    </div>
+                </div></div>
+            </div>
+            <div class="col-6 col-lg">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <div class="text-muted small">Exited today</div>
+                    <div class="fs-3 fw-semibold">{{ stats.exits_today }}</div>
+                </div></div>
+            </div>
+            <div class="col-6 col-lg">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <div class="text-muted small">Avg turnaround today (min)</div>
+                    <div class="fs-3 fw-semibold">{{ '%.0f'|format(stats.avg_turnaround) if stats.avg_turnaround is not none else '–' }}</div>
+                </div></div>
+            </div>
+            <div class="col-6 col-lg">
+                <div class="card shadow-sm h-100"><div class="card-body">
+                    <div class="text-muted small">Avg wait for immigration today (min)</div>
+                    <div class="fs-3 fw-semibold">{{ '%.0f'|format(stats.avg_wait) if stats.avg_wait is not none else '–' }}</div>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- queueing model on live data -->
+    <section class="mb-4">
+        <h5 class="mb-3"><span class="section-number">01b</span> Queueing model (M/M/c)</h5>
+        <div class="row g-3" aria-live="polite">
+            {% if queue and not queue.overloaded %}
+            <div class="col-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">Predicted wait at admin windows (min)</div>
+                <div class="fs-3 fw-semibold">{{ '%.1f'|format(queue.Wq) }}</div>
+            </div></div></div>
+            <div class="col-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">Window utilisation</div>
+                <div class="fs-3 fw-semibold">{{ '%.0f'|format(queue.rho * 100) }}%</div>
+            </div></div></div>
+            <div class="col-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">Chance a truck must wait</div>
+                <div class="fs-3 fw-semibold">{{ '%.0f'|format(queue.P_wait * 100) }}%</div>
+            </div></div></div>
+            <div class="col-6 col-lg-3"><div class="card shadow-sm h-100"><div class="card-body">
+                <div class="text-muted small">Arrivals last hour / open windows</div>
+                <div class="fs-3 fw-semibold">{{ queue.arrivals_per_hour }} / {{ queue.windows }}</div>
+            </div></div></div>
+            {% elif queue %}
+            <div class="col-12"><div class="alert alert-danger mb-0">
+                Overloaded: arrivals are faster than {{ queue.windows }} open windows can process. Open another window.
+            </div></div>
+            {% else %}
+            <div class="col-12 text-muted">Not enough data yet for the model.</div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!--trucks per stage-->
+    {% set stages = [
+        ('registered',     'Registered',              url_for('register')),
+        ('goods_declared', 'Goods declared',          url_for('register')),
+        ('allocated',      'Waiting for immigration', url_for('immigration')),
+        ('at_immigration', 'At immigration',          url_for('immigration')),
+        ('cleared',        'Cleared',                 url_for('canopy2')),
+    ] %}
+    <section class="mb-4">
+        <h5 class="mb-3"><span class="section-number">02</span> Crossing pipeline</h5>
+        <div class="row g-3">
+            {% for key, label, link in stages %}
+            <div class="col-6 col-md">
+                <a href="{{ link }}" class="card shadow-sm h-100 text-decoration-none text-reset">
+                    <div class="card-body">
+                        <div class="text-muted small">{{ label }}</div>
+                        <div class="fs-4 fw-semibold">{{ stats.pipeline.get(key, 0) }}</div>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <!--arrivals per hour, plain CSS bars  -->
+    <section class="mb-4">
+        <h5 class="mb-3"><span class="section-number">03</span> Arrivals per hour (last 12 hours)</h5>
+        <div class="card shadow-sm"><div class="card-body">
+            <div class="bar-chart">
+                {% for h in hours %}
+                <div class="bar-group">
+                    <span class="bar" style="height: {{ h.height }}%" title="{{ h.arrivals }} arrivals"></span>
+                    <label>{{ h.label }}</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div></div>
+    </section>
+
+    <div class="row g-3 mb-4">
+        <!-- 04: lanes table -->
+        <section class="col-lg-8">
+            <h5 class="mb-3"><span class="section-number">04</span> Parking lanes</h5>
+            <div class="card shadow-sm"><div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr><th>Lane</th><th>Occupied</th><th>Workload (min)</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for l in stats.lanes %}
+                        <tr>
+                            <td>Lane {{ l.lane_number }}</td>
+                            <td>{{ l.occupied }}/{{ l.capacity }}</td>
+                            <td>{{ '%.0f'|format(l.workload_minutes) }}</td>
+                            <td><span class="badge text-bg-{{ l.badge }}">{{ l.status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-muted">No lanes set up yet</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div></div>
+        </section>
+
+        <!-- lane alerts, only the full and nearly full lanes -->
+        <section class="col-lg-4">
+            <h5 class="mb-3"><span class="section-number">05</span> Lane alerts</h5>
+            <div class="card shadow-sm h-100"><div class="card-body">
+                {% for l in stats.lane_alerts %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h3 class="h6 mb-0">Lane {{ l.lane_number }}</h3>
+                    <strong>{{ l.occupied }}/{{ l.capacity }}</strong>
+                </div>
+                {% else %}
+                <h3 class="h6 mb-0">All lanes have space</h3>
+                {% endfor %}
+            </div></div>
+        </section>
+    </div>
+
+    <!--last 10 crossings with stage badge -->
+    <section class="mb-4">
+        <h5 class="mb-3"><span class="section-number">06</span> Recent crossings</h5>
+        <div class="card shadow-sm"><div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr><th>Manifest</th><th>Truck</th><th>Driver</th><th>Arrived</th><th>Stage</th></tr>
+                </thead>
+                <tbody>
+                    {% for c in stats.recent %}
+                    <tr>
+                        <td>{{ c.manifest_reference }}</td>
+                        <td>{{ c.registration_number }}</td>
+                        <td>{{ c.full_name }}</td>
+                        <td>{{ c.arrived_at.strftime('%H:%M') }}</td>
+                        <td><span class="badge text-bg-{{ c.stage_badge }}">{{ c.stage }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="5" class="text-muted">No crossings yet</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div></div>
+    </section>
+</div>
+
+{% endblock %}

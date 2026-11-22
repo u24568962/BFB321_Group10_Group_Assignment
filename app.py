@@ -7,9 +7,16 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-only-change-me")
 db.init_app(app)
 
+@app.route("/")
+def index():
+    return render_template("index.html",
+                           stats=models.dashboard_stats(),
+                           hours=models.hourly_flow(12),
+                           queue=models.queue_prediction())
+
 # Canopy 1: this is the registration form 
 # This is to display the driver and the truck registration forms.
-@app.route("/")
+@app.route("/register")
 def register():                                                    
     return render_template("register.html", form={})               # created an empty form for registration info
 
