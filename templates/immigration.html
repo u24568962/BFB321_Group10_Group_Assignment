@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Immigration Office{% endblock %}
+
+{% block content %}
+<div>
+    <header class="page-heading">
+        <div class="eyebrow">Immigration office · Admin windows</div>
+        <h2>Immigration Queue</h2>
+        <p class="text-muted">Details were captured once at Canopy 1, so nothing has to be typed again.</p>
+    </header>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Window</th><th>Lane</th><th>Manifest</th><th>Driver</th>
+                            <th>Passport</th><th>Nationality</th><th>Truck</th>
+                            <th>Goods</th><th>Stage</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in crossings %}
+                        <tr>
+                            <td>{{ c.window_number }}</td>
+                            <td>{{ c.lane_number }}</td>
+                            <td>{{ c.manifest_reference }}</td>
+                            <td>{{ c.driver_name }}</td>
+                            <td>{{ c.passport_number }}</td>
+                            <td>{{ c.nationality }}</td>
+                            <td>{{ c.truck_registration }}</td>
+                            <td>{{ (c.goods + ([c.other_goods] if c.other_goods else []))|join(', ') }}</td>
+                            <td><span class="badge text-bg-{{ c.stage_badge }}">{{ c.stage }}</span></td>
+                            <td>
+                                <!--change data so post form -->
+                                <form method="post" action="{{ url_for('advance', crossing_id=c.id) }}">
+                                    <input type="hidden" name="expected_status" value="{{ c.crossing_status }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        {{ 'Start processing' if c.crossing_status == 'allocated' else 'Stamp passport & clear' }}
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="10" class="text-muted">No trucks are waiting for immigration.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

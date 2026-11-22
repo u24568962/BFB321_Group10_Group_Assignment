@@ -137,6 +137,27 @@ def admin_allocation(crossing_id):
         crossing_id=crossing_id)                                   
 
 
+# Imm office:truck queue for admin window
+@app.route("/immigration")
+def immigration():
+    return render_template("immigration.html",
+                           crossings=models.list_immigration_queue())
+
+# Canopy 2: cleared trucks that can exit  
+@app.route("/canopy2")
+def canopy2():
+    return render_template("canopy2.html",
+                           crossings=models.list_ready_to_exit())
+
+#move truck to next steop with one button per row psts
+@app.route("/crossings/<int:crossing_id>/advance", methods=["POST"])
+def advance(crossing_id):
+    expected = request.form.get("expected_status", "")
+    ok, message = models.advance_crossing(crossing_id, expected)
+    flash(message, "success" if ok else "error")
+    # go back to board the button was on
+    return redirect(url_for("canopy2" if expected == "cleared" else "immigration"))
+
 if __name__ == "__main__":                                         
     app.run(debug=True)                                            
 
