@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Canopy 2 - Exit{% endblock %}
+
+{% block content %}
+<div>
+    <header class="page-heading">
+        <div class="eyebrow">Canopy 02 · Exit</div>
+        <h2>Trucks Cleared to Exit</h2>
+        <p class="text-muted">These trucks were cleared at immigration. Check the truck and sign it out.</p>
+    </header>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Manifest</th><th>Truck</th><th>Trailer</th><th>Driver</th>
+                            <th>Passport</th><th>Goods</th><th>Stage</th><th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in crossings %}
+                        <tr>
+                            <td>{{ c.manifest_reference }}</td>
+                            <td>{{ c.truck_registration }}</td>
+                            <td>{{ c.trailer_registration or '–' }}</td>
+                            <td>{{ c.driver_name }}</td>
+                            <td>{{ c.passport_number }}</td>
+                            <td>{{ (c.goods + ([c.other_goods] if c.other_goods else []))|join(', ') }}</td>
+                            <td><span class="badge text-bg-{{ c.stage_badge }}">{{ c.stage }}</span></td>
+                            <td>
+                                <form method="post" action="{{ url_for('advance', crossing_id=c.id) }}">
+                                    <input type="hidden" name="expected_status" value="{{ c.crossing_status }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">Sign out truck</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="8" class="text-muted">No trucks are waiting to exit.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
