@@ -16,10 +16,10 @@ INSERT INTO lanes (lane_number, capacity) VALUES (1, 5), (2, 5), (3, 5), (4, 5),
 INSERT INTO admin_windows (window_number) VALUES (1), (2), (3), (4);
 
 INSERT INTO users (username, password_hash, role) VALUES
-    ('canopy1',     '',     'canopy1'),'$2b$12$FzKloFzCvFFeyRdAyx1obeQOf8ficpzF7UUzx0YJPCqaziHFREc4a'
+    ('canopy1',     '$2b$12$FzKloFzCvFFeyRdAyx1obeQOf8ficpzF7UUzx0YJPCqaziHFREc4a',     'canopy1'),
     ('immigration', '$2b$12$4QESgnXD1bvrJQS9t9mKg.DVUyZd1.SdT69bzbgAQSMi0m39Mh1km', 'immigration'),
     ('canopy2',     '$2b$12$YLZJn/5435sTqS/ncbia5.qbZyiS.db7jUtgtqCS7js/r7mN2YVU.',     'canopy2'),
-    ('admin',       '	$2b$12$EHRIV4MKmC.CWC6zxN2aCOgLjZsXGvs5BCR4zvA3LFSdirouzhXwa',       'admin');
+    ('admin',       '$2b$12$EHRIV4MKmC.CWC6zxN2aCOgLjZsXGvs5BCR4zvA3LFSdirouzhXwa',       'admin');
 
 
 
