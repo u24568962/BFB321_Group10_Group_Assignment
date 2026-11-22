@@ -1,3 +1,5 @@
+import bcrypt
+from flask import session
 import os                                                          
 from flask import (Flask, flash, redirect, render_template, request, url_for)
 import db                                                          
@@ -46,6 +48,8 @@ def edit_crossing(crossing_id):
 def confirm():  
     values, errors = models.validate_registration(request.form)    
     if not errors:
+        values["registered_by"] = session.get("user_id")
+
         ok, message, crossing_id = models.register_crossing(values) 
         #save the truck's registration info and get its ID                                                   
   
@@ -181,10 +185,51 @@ def canopy2():
 @app.route("/crossings/<int:crossing_id>/advance", methods=["POST"])
 def advance(crossing_id):
     expected = request.form.get("expected_status", "")
-    ok, message = models.advance_crossing(crossing_id, expected)
+    ok, message = models.advance_crossing(crossing_id, expected, session.get("user_id"))
     flash(message, "success" if ok else "error")
     # go back to board the button was on
+    
     return redirect(url_for("canopy2" if expected == "cleared" else "immigration"))
+
+# login
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        user = db.query_one("SELECT id, username, password_hash, role FROM users "
+                            "WHERE username = %s AND active = 1", (username,))
+        # bcrypt works on bytes and encode turns both of the strings into bytes
+        if user and bcrypt.checkpw(password.encode(), user["password_hash"].encode()):
+            session.clear()
+            session["user_id"], session["username"], session["role"] = user["id"], user["username"], user["role"]
+            app.logger.info("User %s logged in", username)
+            flash(f"Welcome, {username}.", "success")
+            return redirect(url_for("index"))
+        app.logger.warning("Failed login for %s", username)
+        flash("Wrong username or password.", "error")
+    return render_template("login.html")
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    session.clear()
+    flash("You are logged out.", "success")
+    return redirect(url_for("login"))
+
+# admin open everything but which other roles can open
+ROLE_PAGES = {"immigration": ("immigration",), "canopy2": ("canopy2",)}
+
+@app.before_request
+def require_login():
+    if request.endpoint in ("login", "static") or request.path.startswith("/api/"):
+        return
+    if "user_id" not in session:
+        return redirect(url_for("login"))
+    allowed = ROLE_PAGES.get(request.endpoint)
+    if allowed and session["role"] not in allowed + ("admin",):
+        flash("Your role cannot open that page.", "error")
+        return redirect(url_for("index"))
+
 
 if __name__ == "__main__":                                         
     app.run(debug=True)                                            
