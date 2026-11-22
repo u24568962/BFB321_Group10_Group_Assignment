@@ -11,7 +11,7 @@
         <!-- class="eyebrow" is my custom CSS class defined in the style.css file for the small text above the heading-->
         <div class="eyebrow">Canopy 01 · Arrival registration</div> 
     <!-- class="mb-3" is a Bootstrap class that adds space below the heading-->
-    <h2 class="mb-3">Canopy 1 - Truck Registration</h2>
+    <h2 class="mb-3">{{ 'Edit Truck & Driver Details' if editing else 'Canopy 1 - Truck Registration' }}</h2>
 
     <p class="text-muted"> <!-- add a paragraph with less itense text-->
         Enter truck and driver information
@@ -24,7 +24,8 @@
             <!-- action shows where form information must be sent-->
              <!-- create a form that sends the input information to the confirm 
               function in Flask using  POST method -->
-            <form action="{{ url_for('confirm') }}" method="POST"> 
+                        <form action="{{ url_for('edit_crossing', crossing_id=crossing_id) if editing else url_for('confirm') }}" method="POST">
+
                 <!-- value="{{ form.x or '' }}" it puts back what the user using the wedsite typed if the page is reloaded with an error, so they do not have to re enter everything -->
                 <section class="form-section"> <!-- group form fields together and apply styling from style.css-->
                     <h5 class="card-title mb-4"> <!-- heading of form (mb-4 is bootstrap)-->
@@ -112,7 +113,7 @@
  <!-- this part submits the entered information to Flask when clicked.-->
                 <div class="form-actions"> <!-- this creates a custom styled button from the style.css file-->
                     <button type="submit" class="btn btn-primary"> <!-- class is bootstrapped -->
-                        Save &amp; Continue 
+                        {{ 'Save changes' if editing else 'Save & Continue' }}
                     </button> <!-- &amp just shows & in html -->
                 </div>
 

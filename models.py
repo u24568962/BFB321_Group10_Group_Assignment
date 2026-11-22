@@ -181,7 +181,7 @@ def update_crossing(crossing_id, v):
     except Exception:
         db.rollback()
         raise
-                                                
+
 # Save the goods
 def declare_goods(crossing_id, codes, other_goods):               
     db = get_db()                                                  
@@ -399,7 +399,6 @@ def _add_lane_status(rows):
     for row in rows:
         row["status"], row["badge"] = lane_status(row["occupied"], row["capacity"], row["active"])
     return rows
-
 #use left join to keep the empty lanes in rhe list 
 LANE_SELECT = """
     SELECT l.id, l.lane_number, l.capacity, l.active,
