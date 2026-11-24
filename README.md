@@ -4,21 +4,28 @@ This project is a web-based solution for insufficient flow of information in the
 
 ## Group members
 
-* Micah Janse van Rensburg | u23552931 | micah-jvr & micah-jvr-UP|
-* Carine Pretorius | u24568962 | u24568962 |
-* Chardi Snyman | u24595986 | ChardiSny |
+| Name | Student number | GitHub username |
+| --- | --- | --- |
+| Micah Janse van Rensburg | u23552931 | micah-jvr & micah-jvr-UP |
+|Carine Pretorius | u24568962 | u24568962 |
+| Chardi Snyman | u24595986 | ChardiSny |
 
 ## Task allocation
 
-Micah: flask routes, edit and update flow, JSON API, login with roles 
-Carine: database models file, transactions, lane and window allocation, dashboard KPIs, M/M/c model, immigration and Canopy 2 boards, README 
-Chardi: front end, the base layout, the registration, goods and lane pages, styling  
+**Micah**: flask routes, edit and update flow, JSON API, login with roles, report: final concept and architecture, technology integration, user journey and workflow, sustainability and scalability, conclusion
+**Carine**: database models file, transactions, lane and window allocation, dashboard KPIs, M/M/c model, immigration and Canopy 2 boards, README, report: implementation guide
+**Chardi**: front end, the base layout, the registration, goods and lane pages, styling, report: executive summary, user journey and workflow, risks and mitigation, reflections and key learnings
 
-## Stack
+## Technologies used
 
-HTML + Bootstrap 5 + Jinja2, Flask, MySQL (Aiven) via PyMySQL, Python supply chain models
+| Layer      | Technology                         |
+|------------|------------------------------------|
+| Front end  | HTML, Bootstrap 5, Jinja2          |
+| Back end   | Flask (Python)                     |
+| Database   | MySQL on Aiven, accessed via PyMySQL |
+| Models     | Python supply chain models         |
 
-## How to run it (Windows; macOS/Linux commands in brackets)
+## How to run the solution
 
 1. Clone the repository and open the folder in VS Code
    ```bash
@@ -28,14 +35,14 @@ HTML + Bootstrap 5 + Jinja2, Flask, MySQL (Aiven) via PyMySQL, Python supply cha
 2. Create and activate a virtual environment, then install the packages
    ```bash
    python -m venv venv
-   venv\Scripts\activate          (source venv/bin/activate)
+   venv\Scripts\activate          
    pip install -r requirements.txt
    ```
 3. Create a free MySQL service on https://console.aiven.io (MySQL → Free plan), wait until it says
    **Running**, and create a database called `lebombo` (Databases tab → Create database).
 4. Copy the settings template and fill in your Aiven values
    ```bash
-   copy .env.example .env         (cp .env.example .env)
+   copy .env.example .env        
    ```
 5. Build the tables and load the sample data
    ```bash
@@ -59,16 +66,15 @@ HTML + Bootstrap 5 + Jinja2, Flask, MySQL (Aiven) via PyMySQL, Python supply cha
 | immigration | immigration-demo | immigration | overview, Canopy 1, immigration |
 | canopy2 | canopy2-demo | canopy2 | overview, Canopy 1, Canopy 2 |
 
-The JSON API (`/api/...`) does not need a login so it can be tested with a browser or Postman
+The JSON API (`/api/...`) does not need a login so it can be tested with a browser
 (see Limitations).
 
 ## User flows
 
-1. **Canopy 1 (create):** register driver + truck → confirm / edit details → declare goods →
-   the model allocates a lane and an admin window.
+1. **Canopy 1 (create):** register driver and truck, confirm or edit details, declare goods, the model allocates a lane and an admin window.
 2. **Immigration office (update):** see the queue per window with passport and goods already filled
-   in → *Start processing* → *Stamp passport & clear*.
-3. **Canopy 2 (update):** see cleared trucks → *Sign out truck* (frees the lane).
+   in, *Start processing*, *Stamp passport and clear*.
+3. **Canopy 2 (update):** see cleared trucks, *Sign out truck* and frees the lane.
 4. **Overview dashboard (read):** live KPIs that change after every action above.
 
 ## Supply chain models
@@ -97,7 +103,7 @@ Both are plain Python with no Flask or database code, and are unit-tested in `te
 
 ## Database
 
-9 tables in third normal form; every main table has `created_at` / `updated_at`.
+9 tables in third normal form
 
 * `drivers`, `trucks`: stored once, reused for every crossing (UNIQUE passport, licence, registration)
 * `crossings`: one trip through the border; status moves registered → goods_declared →
@@ -179,10 +185,10 @@ mysql -h <DB_HOST> -P <DB_PORT> -u avnadmin -p --ssl-mode=REQUIRED lebombo < bac
 
 | Message | What to do |
 |---|---|
-| Can't connect to MySQL server ... timed out | Aiven service is asleep → power it on, wait for Running. Check DB_HOST and DB_PORT |
-| Access denied for user | DB_USER / DB_PASSWORD wrong → copy the password again from Aiven |
+| Can't connect to MySQL server ... timed out | Aiven service is asleep, power it on, wait for Running. Check DB_HOST and DB_PORT |
+| Access denied for user | DB_USER / DB_PASSWORD wrong, copy the password again from Aiven |
 | RuntimeError: 'cryptography' package is required | `pip install -r requirements.txt` (with the venv active) |
-| ModuleNotFoundError: No module named 'flask' | The venv is not active → activate it, then install again |
+| ModuleNotFoundError: No module named 'flask' | The venv is not active, activate it, then install again |
 | Unknown database | DB_NAME must match your database name: lebombo |
 | Table doesn't exist | `python init_db.py --reset` |
 | Changes to .env ignored | Stop the app (Ctrl+C) and start it again |
@@ -205,6 +211,7 @@ mysql -h <DB_HOST> -P <DB_PORT> -u avnadmin -p --ssl-mode=REQUIRED lebombo < bac
 ![Confirm registration details](docs/screenshots/registration2.png)
 ![Declare goods](docs/screenshots/declaregoods.png)
 ![Lane allocation](docs/screenshots/lane.png)
+![Admin page](docs/screenshots/admin.png)
 
 ### Immigration office
 
@@ -215,10 +222,6 @@ mysql -h <DB_HOST> -P <DB_PORT> -u avnadmin -p --ssl-mode=REQUIRED lebombo < bac
 
 ![Canopy 2 sign-out](docs/screenshots/canopy2.png)
 
-### Admin
-
-![Admin page](docs/screenshots/admin.png)
-
 ### JSON API
 
 ![API KPIs response 1](docs/screenshots/apikpi.png)
@@ -226,6 +229,6 @@ mysql -h <DB_HOST> -P <DB_PORT> -u avnadmin -p --ssl-mode=REQUIRED lebombo < bac
 
 ## Limitations and next improvements
 
-* The JSON API is open (no login) so it can be marked; in production it needs a token or session check.
-* Processing minutes per goods category are estimates; they should be updated from measured times.
-* One border post only; multi-site would need a `sites` table and a `site_id` on lanes, windows and crossings.
+* The JSON API is open and requires no login so it can be marked, it needs a token or session check.
+* Processing minutes per goods category are estimates and should be updated from measured times.
+* The solution is for one border post only. A multi-site would need a `sites` table and a `site_id` on lanes, windows and crossings.
