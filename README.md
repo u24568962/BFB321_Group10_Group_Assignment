@@ -4,9 +4,9 @@ This project is a web-based solution for insufficient flow of information in the
 
 ## Group members
 
-Micah Janse van Rensburg | u23552931 | micah-jvr & micah-jvr-UP|
-Carine Pretorius | u24568962 | u24568962 |
-Chardi Snyman | u24595986 | ChardiSny |
+* Micah Janse van Rensburg | u23552931 | micah-jvr & micah-jvr-UP|
+* Carine Pretorius | u24568962 | u24568962 |
+* Chardi Snyman | u24595986 | ChardiSny |
 
 ## Task allocation
 
