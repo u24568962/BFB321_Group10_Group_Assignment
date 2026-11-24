@@ -12,9 +12,9 @@ This project is a web-based solution for insufficient flow of information in the
 
 ## Task allocation
 
-**Micah**: flask routes, edit and update flow, JSON API, login with roles, report: final concept and architecture, technology integration, user journey and workflow, sustainability and scalability, conclusion
-**Carine**: database models file, transactions, lane and window allocation, dashboard KPIs, M/M/c model, immigration and Canopy 2 boards, README, report: implementation guide
-**Chardi**: front end, the base layout, the registration, goods and lane pages, styling, report: executive summary, user journey and workflow, risks and mitigation, reflections and key learnings
+* **Micah**: flask routes, edit and update flow, JSON API, login with roles, report: final concept and architecture, technology integration, user journey and workflow, sustainability and scalability, conclusion
+* **Carine**: database models file, transactions, lane and window allocation, dashboard KPIs, M/M/c model, immigration and Canopy 2 boards, README, report: implementation guide
+* **Chardi**: front end, the base layout, the registration, goods and lane pages, styling, report: executive summary, user journey and workflow, risks and mitigation, reflections and key learnings
 
 ## Technologies used
 
@@ -38,8 +38,8 @@ This project is a web-based solution for insufficient flow of information in the
    venv\Scripts\activate          
    pip install -r requirements.txt
    ```
-3. Create a free MySQL service on https://console.aiven.io (MySQL → Free plan), wait until it says
-   **Running**, and create a database called `lebombo` (Databases tab → Create database).
+3. Create a free MySQL service on https://console.aiven.io, wait until it says
+   Running, and create a database called `lebombo`.
 4. Copy the settings template and fill in your Aiven values
    ```bash
    copy .env.example .env        
@@ -71,17 +71,17 @@ The JSON API (`/api/...`) does not need a login so it can be tested with a brows
 
 ## User flows
 
-1. **Canopy 1 (create):** register driver and truck, confirm or edit details, declare goods, the model allocates a lane and an admin window.
+1. **Canopy 1 (create):** register driver and truck -> confirm or edit details -> declare goods -> the model allocates a lane and an admin window
 2. **Immigration office (update):** see the queue per window with passport and goods already filled
-   in, *Start processing*, *Stamp passport and clear*.
-3. **Canopy 2 (update):** see cleared trucks, *Sign out truck* and frees the lane.
-4. **Overview dashboard (read):** live KPIs that change after every action above.
+   in -> Start processing -> Stamp passport and clear
+3. **Canopy 2 (update):** see cleared trucks -> Sign out truck and frees the lane
+4. **Overview dashboard (read):** live KPIs that change after every action above
 
 ## Supply chain models
 
 * `supply_chain/lane_allocation.py`: processing time = 4 min + minutes per declared goods category
-  (+2 min for other goods); each truck goes to the non-full lane with the **least workload**
-  (ties → lowest lane number). Predicted wait = workload already in that lane.
+  (+2 min for other goods); each truck goes to the non-full lane with the least workload
+  (ties -> lowest lane number). Predicted wait = workload already in that lane.
 * `supply_chain/queueing_theory.py`: M/M/1 and M/M/c formulas. The dashboard feeds it live
   data (λ = arrivals in the last hour, μ = 1 / average processing time, c = open windows) to
   predict the wait at the admin windows and the window utilisation.
